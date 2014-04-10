@@ -1,10 +1,10 @@
 function getServiceType(service_type) {
 	switch(service_type) {
-		case "video":
+		case 'video':
 			return 3;
 		break;
 
-		case "texto":
+		case 'texto':
 			return 4;
 		break;
 	}
@@ -12,11 +12,11 @@ function getServiceType(service_type) {
 
 function getLanguage(language) {
 	switch(language) {
-		case "portugues":
+		case 'portugues':
 			return 1;
 		break;
 
-		case "glosa":
+		case 'glosa':
 			return 2;
 		break;
 	}
@@ -24,19 +24,19 @@ function getLanguage(language) {
 
 function getPosition(position) {
 	switch(position) {
-		case "superior-esquerdo":
+		case 'superior-esquerdo':
 			return 1;
 		break;
 
-		case "superior-direito":
+		case 'superior-direito':
 			return 2;
 		break;
 
-		case "inferior-direito":
+		case 'inferior-direito':
 			return 3;
 		break;
 
-		case "inferior-esquerdo":
+		case 'inferior-esquerdo':
 			return 4;
 		break;
 	}
@@ -44,15 +44,15 @@ function getPosition(position) {
 
 function getSize(size) {
 	switch(size) {
-		case "pequeno":
+		case 'pequeno':
 			return 1;
 		break;
 
-		case "medio":
+		case 'medio':
 			return 2;
 		break;
 
-		case "grande":
+		case 'grande':
 			return 3;
 		break;
 	}
@@ -60,18 +60,18 @@ function getSize(size) {
 
 function getTransparency(transparency) {
 	switch(transparency) {
-		case "opaco":
+		case 'opaco':
 			return 0;
 		break;
 
-		case "transparente":
+		case 'transparente':
 			return 1;
 		break;
 	}
 };
 
 function checkServiceType(service_type) {
-	var t_types = ["video", "texto"];
+	var t_types = ['video', 'texto'];
 
 	for (var i = 0; i < t_types.length; i++){
 		if (service_type === t_types[i]) {
@@ -85,7 +85,7 @@ function checkServiceType(service_type) {
 };
 
 function checkLanguage(language) {
-	var t_types = ["portugues", "glosa"];
+	var t_types = ['portugues', 'glosa'];
 
 	for (var i = 0; i < t_types.length; i++){
 		if (language === t_types[i]) {
@@ -99,7 +99,7 @@ function checkLanguage(language) {
 };
 
 function checkPosition(position) {
-	var t_types = ["superior-esquerdo", "superior-direito", "inferior-esquerdo", "inferior-direito"];
+	var t_types = ['superior-esquerdo', 'superior-direito', 'inferior-esquerdo', 'inferior-direito'];
 
 	for (var i = 0; i < t_types.length; i++){
 		if (position === t_types[i]) {
@@ -113,7 +113,7 @@ function checkPosition(position) {
 };
 
 function checkSize(size) {
-	var t_types = ["pequeno", "medio", "grande"];
+	var t_types = ['pequeno', 'medio', 'grande'];
 
 	for (var i = 0; i < t_types.length; i++){
 		if (size === t_types[i]) {
@@ -127,7 +127,7 @@ function checkSize(size) {
 };
 
 function checkTransparency(transparency) {
-	var t_types = ["opaco", "transparente"];
+	var t_types = ['opaco', 'transparente'];
 
 	for (var i = 0; i < t_types.length; i++){
 		if (transparency === t_types[i]) {
@@ -140,17 +140,13 @@ function checkTransparency(transparency) {
 	}
 };
 
-function errorMessage(message) {
-	return { "error": message }
-};
-
 function checkVideo(file) {
-    var accepted_file_types = ["flv", "ts", "avi", "mp4", "mov", "webm", "wmv", "mkv",];
+    var accepted_file_types = ['flv', 'ts', 'avi', 'mp4', 'mov', 'webm', 'wmv', 'mkv',];
     return check_type(file, accepted_file_types)
 };
 
 function checkSubtitle(file) {
-    var accepted_file_types = ["srt"];
+    var accepted_file_types = ['srt'];
     return check_type(file, accepted_file_types)
 };
 
@@ -173,6 +169,10 @@ function check_type(file, accepted_file_types) {
   	}
 
   	return isValidFile;
+};
+
+function errorMessage(message) {
+	return { 'error': message }
 };
 
 module.exports.getServiceType = getServiceType;

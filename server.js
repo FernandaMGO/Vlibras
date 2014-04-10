@@ -2,7 +2,7 @@ var parameters = require('./helpers/parameters');
 var exec = require('child_process').exec, child;
 var path = require('path');
 var fs = require('fs');
-var express = require("express");
+var express = require('express');
 
 var host = '0.0.0.0';
 var port = 5000;
@@ -10,31 +10,30 @@ var port = 5000;
 var app = express();
 
 var ID_FROM_BD = 1;
-var SERVER_IP = "150.165.204.30";
+var SERVER_IP = '150.165.204.30';
 
-app.use(express.static(path.join(__dirname, "/videos")));
+app.use(express.static(path.join(__dirname, '/videos')));
 app.use(express.bodyParser({ keepExtensions: true, uploadDir: path.join(__dirname, '/uploads') }));
 
-app.get("/", function(req, res){
-	res.send(200, "<center><h2>Server " + host + ":" + port + " is running</h2></center>");
+app.get('/', function(req, res){
+	res.send(200, { 'status': 'server ' + host + ':' + port + ' is running!' } );
 });
 
-app.post("/api", function(req, res){
-
+app.post('/api', function(req, res){
 	/* Verifica se o paramêtro [servico] possui algum valor */
-	if (req.query.servico !== "") {
+	if (req.query.servico !== '') {
 		/* Verifica qual é o Tipo de Serviço fornecido */ 
 		switch(req.query.servico) {
 			/* Case para o Tipo de Serviço: Texto */
-			case "texto":
+			case 'texto':
 				/* Verifica se os paramêtros [transparencia, texto] possuem algum valor */
-				if ((req.query.transparencia !== "") && (req.query.texto !== "")) {
+				if ((req.query.transparencia !== '') && (req.query.texto !== '')) {
 					/* Verifica se o paramêtro [transparencia] possui os únicos valores possíveis [opaco, transparente] */
 					if (parameters.getTransparency(req.query.transparencia)) {
 						/* Cria a linha de comando */
-						var command_line =  "echo " + req.query.texto + " >> " + __dirname + "/text_files/" + ID_FROM_BD + " && cd ../vlibras-core" +
-											" && ./gtaaas " + parameters.getServiceType(req.query.servico) + " ../vlibras-api/text_files/" + 
-											ID_FROM_BD + " " + parameters.getTransparency(req.query.transparencia) + " " + ID_FROM_BD + " WEB";
+						var command_line =  'echo ' + req.query.texto + ' >> ' + __dirname + '/text_files/' + ID_FROM_BD + ' && cd ../vlibras-core' +
+											' && ./gtaaas ' + parameters.getServiceType(req.query.servico) + ' ../vlibras-api/text_files/' + 
+											ID_FROM_BD + ' ' + parameters.getTransparency(req.query.transparencia) + ' ' + ID_FROM_BD + ' WEB';
 
 						/* Executa a linha de comando */
 						child = exec(command_line, function(err, stdout, stderr) { 
@@ -43,8 +42,8 @@ app.post("/api", function(req, res){
 						});
 
 						/* Listener que dispara quando a requisição ao core finaliza */
-						child.on("close", function(code, signal){
-							res.send(200, { "response" : "http://" + SERVER_IP + ":" + port + "/" + ID_FROM_BD + ".webm" });
+						child.on('close', function(code, signal){
+							res.send(200, { 'response' : 'http://' + SERVER_IP + ':' + port + '/' + ID_FROM_BD + '.webm' });
 							ID_FROM_BD++;
 						});
 					} else {
@@ -58,7 +57,7 @@ app.post("/api", function(req, res){
 			case 'video':
 
 				/* Verifica se os paramêtros [transparencia, texto] possuem algum valor */
-				if ((req.query.posicao !== "") && (req.query.tamanho !== "") && (req.query.transparencia !== "")) {
+				if ((req.query.posicao !== '') && (req.query.tamanho !== '') && (req.query.transparencia !== '')) {
 					/* Verifica se os paramêtros [linguagem, posicao, tamanho, transparencia] possuem os seus únicos valores possíveis */
 					if ((parameters.checkPosition(req.query.posicao) === true) && (parameters.checkSize(req.query.tamanho) === true) && (parameters.checkTransparency(req.query.transparencia) === true)) {
 						/* Checa se o arquivo de vídeo submetivo possui uma extensão válida */
@@ -74,9 +73,9 @@ app.post("/api", function(req, res){
 								});
 
 								/* Cria a linha de comando */
-								var command_line =  "cd ../vlibras-core && ./gtaaas " + parameters.getServiceType(req.query.servico) + " ../vlibras-api/uploads/" + ID_FROM_BD + "/" +
-													req.files.video.name + " 1 " + parameters.getPosition(req.query.posicao) + " " + parameters.getSize(req.query.tamanho) + " " +
-													parameters.getTransparency(req.query.transparencia) + " " + ID_FROM_BD;
+								var command_line =  'cd ../vlibras-core && ./gtaaas ' + parameters.getServiceType(req.query.servico) + ' ../vlibras-api/uploads/' + ID_FROM_BD + '/' +
+													req.files.video.name + ' 1 ' + parameters.getPosition(req.query.posicao) + ' ' + parameters.getSize(req.query.tamanho) + ' ' +
+													parameters.getTransparency(req.query.transparencia) + ' ' + ID_FROM_BD;
 
 								/* Executa a linha de comando */
 								child = exec(command_line, function(err, stdout, stderr) { 
@@ -85,8 +84,8 @@ app.post("/api", function(req, res){
 								});
 
 								/* Listener que dispara quando a requisição ao core finaliza */
-								child.on("close", function(code, signal){
-									res.send(200, { "response" : "http://" + SERVER_IP + ":" + port + "/" + ID_FROM_BD + ".flv" });
+								child.on('close', function(code, signal){
+									res.send(200, { 'response' : 'http://' + SERVER_IP + ':' + port + '/' + ID_FROM_BD + '.flv' });
 								});
 							});
 						} else {
@@ -108,7 +107,6 @@ app.post("/api", function(req, res){
 	} else {
 		res.send(500, parameters.errorMessage('Especifique o tipo do serviço'));
 	}
-
 });
 
 app.listen(port, host, function(){
