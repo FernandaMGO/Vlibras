@@ -1,6 +1,11 @@
 install:
-	@npm install
-	@sudo npm install -g forever
+	@read -p "Você deseja instalar o módulo Forever? (y/n) " choice; \
+	if [ "$$choice" = "y" ]; then \
+	  sudo npm install -g forever; \
+	  npm install; \
+	else \
+	  npm install; \
+	fi
 
 run:
 	@forever start server.js
