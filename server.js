@@ -82,6 +82,8 @@ app.post('/api', function(req, res){
 													req.files.video.name + ' 1 ' + parameters.getPosition(req.query.posicao) + ' ' + parameters.getSize(req.query.tamanho) + ' ' +
 													parameters.getTransparency(req.query.transparencia) + ' ' + ID_FROM_BD;
 
+								console.log(command_line);
+
 								/* Executa a linha de comando */
 								child = exec(command_line, function(err, stdout, stderr) { 
 								 	// [stdout] = vlibras-core output
