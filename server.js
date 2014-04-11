@@ -178,14 +178,10 @@ app.post('/api', function(req, res){
 										if (error) { console.log(error); }
 									});
 
-									sleep(2000);
-
 									/* Move a legenda submetido para a pasta com o seu ID correspondente */
 									fs.rename(req.files.legenda.path, __dirname + '/uploads/' + ID_FROM_BD + '/' + req.files.legenda.name, function(error) {
 										if (error) { console.log(error); }
 									});
-
-									sleep(2000);
 
 									/* Cria a linha de comando */
 									var command_line = 'vlibras_user/vlibras-core/./gtaaas ' + parameters.getServiceType(req.query.servico) + ' uploads/' + ID_FROM_BD + '/' +
