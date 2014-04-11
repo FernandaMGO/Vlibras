@@ -46,6 +46,11 @@ app.post('/api', function(req, res){
 							res.send(200, { 'response' : 'http://' + SERVER_IP + ':' + port + '/' + ID_FROM_BD + '.webm' });
 							ID_FROM_BD++;
 						});
+
+						/* Listener que dispara quando a requisição ao core da erro */
+						child.on('error', function(code, signal){
+							res.send(500, parameters.errorMessage('Erro na chamada ao core'));
+						});
 					} else {
 						res.send(500, parameters.errorMessage('Parâmetros insuficientes ou inválidos'));
 					}
@@ -86,6 +91,12 @@ app.post('/api', function(req, res){
 								/* Listener que dispara quando a requisição ao core finaliza */
 								child.on('close', function(code, signal){
 									res.send(200, { 'response' : 'http://' + SERVER_IP + ':' + port + '/' + ID_FROM_BD + '.flv' });
+									ID_FROM_BD++;
+								});
+
+								/* Listener que dispara quando a requisição ao core da erro */
+								child.on('error', function(code, signal){
+									res.send(500, parameters.errorMessage('Erro na chamada ao core'));
 								});
 							});
 						} else {
