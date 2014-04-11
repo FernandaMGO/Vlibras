@@ -29,7 +29,7 @@ app.post('/api', function(req, res){
 				/* Verifica se os paramêtros [transparencia, texto] possuem algum valor */
 				if ((req.query.transparencia !== '') && (req.query.texto !== '')) {
 					/* Verifica se o paramêtro [transparencia] possui os únicos valores possíveis [opaco, transparente] */
-					if (parameters.getTransparency(req.query.transparencia)) {
+					if (parameters.checkTransparency(req.query.transparencia)) {
 						/* Cria a linha de comando */
 						var command_line =  'echo ' + req.query.texto + ' >> ' + __dirname + '/text_files/' + ID_FROM_BD + ' && cd ../vlibras-core' +
 											' && ./gtaaas ' + parameters.getServiceType(req.query.servico) + ' ../vlibras-api/text_files/' + 
