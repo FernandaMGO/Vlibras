@@ -208,7 +208,7 @@ app.post('/api', function(req, res){
 										child.on('error', function(code, signal){
 											res.send(500, parameters.errorMessage('Erro na chamada ao core'));
 										});
-									}, 3000);
+									}, 5000);
 								});
 							} else {
 								res.send(500, parameters.errorMessage('Legenda com Extensão Inválida'));
