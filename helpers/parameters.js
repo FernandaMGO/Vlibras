@@ -1,5 +1,9 @@
 function getServiceType(service_type) {
-	switch(service_type) {
+	switch(service_type) {		
+		case 'video-legenda':
+			return 2;
+		break;
+
 		case 'video':
 			return 3;
 		break;
