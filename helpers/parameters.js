@@ -7,6 +7,10 @@ function getServiceType(service_type) {
 		case 'texto':
 			return 4;
 		break;
+
+		case 'legenda':
+			return 5;
+		break;
 	}
 };
 
