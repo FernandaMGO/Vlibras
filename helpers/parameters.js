@@ -152,8 +152,6 @@ function checkSubtitle(file) {
 
 function check_type(file, accepted_file_types) {
 
-	console.log(file);
-
   	var ext = file.substring(file.lastIndexOf('.') + 1).toLowerCase();
   	var isValidFile = false;
 
