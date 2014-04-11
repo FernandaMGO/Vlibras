@@ -129,23 +129,23 @@ app.post('/api', function(req, res){
 								/* Cria a linha de comando */
 								var command_line =  'vlibras_user/vlibras-core/./gtaaas ' + parameters.getServiceType(req.query.servico) + ' uploads/' + ID_FROM_BD + '/' +
 													req.files.legenda.name + ' ' + parameters.getTransparency(req.query.transparencia) + ' ' + ID_FROM_BD;
-console.log(command_line);
-								// /* Executa a linha de comando */
-								// child = exec(command_line, function(err, stdout, stderr) { 
-								//  	// [stdout] = vlibras-core output
-								//  	// console.log(stdout);
-								// });
 
-								// /* Listener que dispara quando a requisição ao core finaliza */
-								// child.on('close', function(code, signal){
-								// 	res.send(200, { 'response' : 'http://' + SERVER_IP + ':' + port + '/' + ID_FROM_BD + '.flv' });
-								// 	ID_FROM_BD++;
-								// });
+								/* Executa a linha de comando */
+								child = exec(command_line, function(err, stdout, stderr) { 
+								 	// [stdout] = vlibras-core output
+								 	// console.log(stdout);
+								});
 
-								// /* Listener que dispara quando a requisição ao core da erro */
-								// child.on('error', function(code, signal){
-								// 	res.send(500, parameters.errorMessage('Erro na chamada ao core'));
-								// });
+								/* Listener que dispara quando a requisição ao core finaliza */
+								child.on('close', function(code, signal){
+									res.send(200, { 'response' : 'http://' + SERVER_IP + ':' + port + '/' + ID_FROM_BD + '.flv' });
+									ID_FROM_BD++;
+								});
+
+								/* Listener que dispara quando a requisição ao core da erro */
+								child.on('error', function(code, signal){
+									res.send(500, parameters.errorMessage('Erro na chamada ao core'));
+								});
 							});
 						} else {
 							res.send(500, parameters.errorMessage('Vídeo com Extensão Inválida'));
