@@ -16,7 +16,7 @@ app.use(express.static(path.join(__dirname, '/videos')));
 app.use(express.bodyParser({ keepExtensions: true, uploadDir: path.join(__dirname, '/uploads') }));
 
 app.get('/', function(req, res){
-	res.send(200, { 'status': 'server ' + host + ':' + port + ' is running!' } );
+	res.send(200, { 'status': 'server is running!' } );
 });
 
 app.post('/api', function(req, res){
@@ -32,7 +32,7 @@ app.post('/api', function(req, res){
 					if (parameters.checkTransparency(req.query.transparencia)) {
 						/* Cria a linha de comando */
 						var command_line = 'echo ' + req.query.texto + ' >> ' + __dirname + '/text_files/' + ID_FROM_BD + ' && cd ../vlibras-core' +
-											' && ./gtaaas ' + parameters.getServiceType(req.query.servico) + ' ../vlibras-api/text_files/' + 
+											' && ./vlibras ' + parameters.getServiceType(req.query.servico) + ' ../vlibras-api/text_files/' + 
 											ID_FROM_BD + ' ' + parameters.getTransparency(req.query.transparencia) + ' ' + ID_FROM_BD + ' WEB';
 
 						/* Executa a linha de comando */
@@ -77,7 +77,7 @@ app.post('/api', function(req, res){
 								});
 
 								/* Cria a linha de comando */
-								var command_line = 'vlibras_user/vlibras-core/./gtaaas ' + parameters.getServiceType(req.query.servico) + ' uploads/' + ID_FROM_BD + '/' +
+								var command_line = 'vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.query.servico) + ' uploads/' + ID_FROM_BD + '/' +
 													req.files.video.name + ' 1 ' + parameters.getPosition(req.query.posicao) + ' ' + parameters.getSize(req.query.tamanho) + ' ' +
 													parameters.getTransparency(req.query.transparencia) + ' ' + ID_FROM_BD;
 
@@ -127,7 +127,7 @@ app.post('/api', function(req, res){
 								});
 
 								/* Cria a linha de comando */
-								var command_line = 'vlibras_user/vlibras-core/./gtaaas ' + parameters.getServiceType(req.query.servico) + ' uploads/' + ID_FROM_BD + '/' +
+								var command_line = 'vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.query.servico) + ' uploads/' + ID_FROM_BD + '/' +
 													req.files.legenda.name + ' ' + parameters.getTransparency(req.query.transparencia) + ' ' + ID_FROM_BD;
 
 								/* Executa a linha de comando */
@@ -184,7 +184,7 @@ app.post('/api', function(req, res){
 									});
 
 									/* Cria a linha de comando */
-									var command_line = 'vlibras_user/vlibras-core/./gtaaas ' + parameters.getServiceType(req.query.servico) + ' uploads/' + ID_FROM_BD + '/' +
+									var command_line = 'vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.query.servico) + ' uploads/' + ID_FROM_BD + '/' +
 													req.files.video.name + ' uploads/' + ID_FROM_BD + '/' + req.files.legenda.name + ' ' + parameters.getLanguage(req.query.linguagem) +
 													' ' + parameters.getPosition(req.query.posicao) + ' ' + parameters.getSize(req.query.tamanho) + ' ' +
 													parameters.getTransparency(req.query.transparencia) + ' ' + ID_FROM_BD;

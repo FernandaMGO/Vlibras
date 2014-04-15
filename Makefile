@@ -10,8 +10,13 @@ install:
 run:
 	@forever start server.js
 
-stop:
+stop: clean
 	@forever stop server.js
 
 list:
 	@forever list
+
+clean:
+	@rm text_files/* 
+	@rm videos/*
+	@rm -r uploads/* 
