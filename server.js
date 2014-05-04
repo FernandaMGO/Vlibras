@@ -25,15 +25,7 @@ app.post('/api', function(req, res){
 		/* Verifica qual é o Tipo de Serviço fornecido */ 
 		switch(req.query.servico) {
 			/* Case para o Tipo de Serviço: Texto */
-			case ('texto' || 'ios'):
-				/* Verifica se o serviço é [texto] ou [ios] e muda a extensão do vídeo de retorno */
-				if (req.query.servico === 'texto') {
-					var extensao_video = '.webm';
-					var core_type = ' WEB';
-				} else if (req.query.servico === 'ios') {
-					var extensao_video = '.avi';
-					var core_type = ' IOS';
-				}
+			case 'texto':
 				/* Verifica se os paramêtros [transparencia, texto] possuem algum valor */
 				if ((req.query.transparencia !== '') && (req.query.texto !== '')) {
 					/* Verifica se o paramêtro [transparencia] possui os únicos valores possíveis [opaco, transparente] */
@@ -41,7 +33,7 @@ app.post('/api', function(req, res){
 						/* Cria a linha de comando */
 						var command_line = 'echo ' + req.query.texto + ' >> ' + __dirname + '/text_files/' + ID_FROM_BD + ' && cd ../vlibras-core' +
 											' && ./vlibras ' + parameters.getServiceType(req.query.servico) + ' ../vlibras-api/text_files/' + 
-											ID_FROM_BD + ' ' + parameters.getTransparency(req.query.transparencia) + ' ' + ID_FROM_BD + core_type;
+											ID_FROM_BD + ' ' + parameters.getTransparency(req.query.transparencia) + ' ' + ID_FROM_BD + ' WEB';
 
 						/* Executa a linha de comando */
 						child = exec(command_line, function(err, stdout, stderr) { 
@@ -51,7 +43,42 @@ app.post('/api', function(req, res){
 
 						/* Listener que dispara quando a requisição ao core finaliza */
 						child.on('close', function(code, signal){
-							res.send(200, { 'response' : 'http://' + SERVER_IP + ':' + port + '/' + ID_FROM_BD + extensao_video });
+							res.send(200, { 'response' : 'http://' + SERVER_IP + ':' + port + '/' + ID_FROM_BD + '.webm' });
+							ID_FROM_BD++;
+						});
+
+						/* Listener que dispara quando a requisição ao core da erro */
+						child.on('error', function(code, signal){
+							res.send(500, parameters.errorMessage('Erro na chamada ao core'));
+						});
+					} else {
+						res.send(500, parameters.errorMessage('Parâmetros insuficientes ou inválidos'));
+					}
+				} else {
+					res.send(500, parameters.errorMessage('O valor de algum parâmetro está vazio'));
+				}
+			break;
+
+			/* Case para o Tipo de Serviço: iOS */
+			case 'ios':
+				/* Verifica se os paramêtros [transparencia, texto] possuem algum valor */
+				if ((req.query.transparencia !== '') && (req.query.texto !== '')) {
+					/* Verifica se o paramêtro [transparencia] possui os únicos valores possíveis [opaco, transparente] */
+					if (parameters.checkTransparency(req.query.transparencia)) {
+						/* Cria a linha de comando */
+						var command_line = 'echo ' + req.query.texto + ' >> ' + __dirname + '/text_files/' + ID_FROM_BD + ' && cd ../vlibras-core' +
+											' && ./vlibras ' + parameters.getServiceType(req.query.servico) + ' ../vlibras-api/text_files/' + 
+											ID_FROM_BD + ' ' + parameters.getTransparency(req.query.transparencia) + ' ' + ID_FROM_BD + ' IOS';
+
+						/* Executa a linha de comando */
+						child = exec(command_line, function(err, stdout, stderr) { 
+						 	// [stdout] = vlibras-core output
+						 	// console.log(stdout);
+						});
+
+						/* Listener que dispara quando a requisição ao core finaliza */
+						child.on('close', function(code, signal){
+							res.send(200, { 'response' : 'http://' + SERVER_IP + ':' + port + '/' + ID_FROM_BD + '.avi' });
 							ID_FROM_BD++;
 						});
 
