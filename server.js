@@ -25,12 +25,14 @@ app.post('/api', function(req, res){
 		/* Verifica qual é o Tipo de Serviço fornecido */ 
 		switch(req.query.servico) {
 			/* Case para o Tipo de Serviço: Texto */
-			case 'texto' || 'ios':
+			case ('texto' || 'ios'):
 				/* Verifica se o serviço é [texto] ou [ios] e muda a extensão do vídeo de retorno */
-				if (req.query.servico == 'texto') {
+				if (req.query.servico === 'texto') {
 					var extensao_video = '.webm';
-				} else if (req.query.servico == 'ios') {
+					var core_type = ' WEB';
+				} else if (req.query.servico === 'ios') {
 					var extensao_video = '.avi';
+					var core_type = ' IOS';
 				}
 				/* Verifica se os paramêtros [transparencia, texto] possuem algum valor */
 				if ((req.query.transparencia !== '') && (req.query.texto !== '')) {
@@ -39,7 +41,7 @@ app.post('/api', function(req, res){
 						/* Cria a linha de comando */
 						var command_line = 'echo ' + req.query.texto + ' >> ' + __dirname + '/text_files/' + ID_FROM_BD + ' && cd ../vlibras-core' +
 											' && ./vlibras ' + parameters.getServiceType(req.query.servico) + ' ../vlibras-api/text_files/' + 
-											ID_FROM_BD + ' ' + parameters.getTransparency(req.query.transparencia) + ' ' + ID_FROM_BD + ' WEB';
+											ID_FROM_BD + ' ' + parameters.getTransparency(req.query.transparencia) + ' ' + ID_FROM_BD + core_type;
 
 						/* Executa a linha de comando */
 						child = exec(command_line, function(err, stdout, stderr) { 
