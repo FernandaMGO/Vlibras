@@ -12,6 +12,10 @@ function getServiceType(service_type) {
 			return 4;
 		break;
 
+		case 'ios':
+			return 4;
+		break;
+
 		case 'legenda':
 			return 5;
 		break;
