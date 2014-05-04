@@ -25,7 +25,13 @@ app.post('/api', function(req, res){
 		/* Verifica qual é o Tipo de Serviço fornecido */ 
 		switch(req.query.servico) {
 			/* Case para o Tipo de Serviço: Texto */
-			case 'texto':
+			case 'texto' || 'ios':
+				/* Verifica se o serviço é [texto] ou [ios] e muda a extensão do vídeo de retorno */
+				if (req.query.servico == 'texto') {
+					var extensao_video = '.webm';
+				} else if (req.query.servico == 'ios') {
+					var extensao_video = '.avi';
+				}
 				/* Verifica se os paramêtros [transparencia, texto] possuem algum valor */
 				if ((req.query.transparencia !== '') && (req.query.texto !== '')) {
 					/* Verifica se o paramêtro [transparencia] possui os únicos valores possíveis [opaco, transparente] */
@@ -43,7 +49,7 @@ app.post('/api', function(req, res){
 
 						/* Listener que dispara quando a requisição ao core finaliza */
 						child.on('close', function(code, signal){
-							res.send(200, { 'response' : 'http://' + SERVER_IP + ':' + port + '/' + ID_FROM_BD + '.webm' });
+							res.send(200, { 'response' : 'http://' + SERVER_IP + ':' + port + '/' + ID_FROM_BD + extensao_video });
 							ID_FROM_BD++;
 						});
 
