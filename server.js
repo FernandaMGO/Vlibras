@@ -23,6 +23,7 @@ app.get('/', function(req, res){
 });
 
 app.post('/api', function(req, res){
+	console.log(req.body);
 	/* Verifica se o paramêtro [servico] possui algum valor */
 	if (req.body.servico !== '') {
 		/* Verifica qual é o Tipo de Serviço fornecido */ 
@@ -98,7 +99,6 @@ app.post('/api', function(req, res){
 			break;
 
 			case 'video':
-				console.log(req.body);
 				/* Verifica se os paramêtros [posicao, tamanho, transparencia] possuem algum valor */
 				if ((req.body.posicao !== '') && (req.body.tamanho !== '') && (req.body.transparencia !== '')) {
 					/* Verifica se os paramêtros [linguagem, posicao, tamanho, transparencia] possuem os seus únicos valores possíveis */
