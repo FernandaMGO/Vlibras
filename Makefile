@@ -3,7 +3,9 @@ install:
 	if [ "$$choice" = "y" ]; then \
 	  sudo npm install -g forever; \
 	  npm install; \
+	  ln -s $$HOME vlibras_user \
 	else \
+	  ln -s $$HOME vlibras_user \
 	  npm install; \
 	fi
 
