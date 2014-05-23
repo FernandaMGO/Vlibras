@@ -23,9 +23,6 @@ app.get('/', function(req, res){
 });
 
 app.post('/api', function(req, res){
-	console.log(req.query);
-	console.log(req.params);
-	console.log(req.body);
 	/* Verifica se o paramêtro [servico] possui algum valor */
 	if (req.query.servico !== '') {
 		/* Verifica qual é o Tipo de Serviço fornecido */ 
@@ -102,9 +99,9 @@ app.post('/api', function(req, res){
 
 			case 'video':
 				/* Verifica se os paramêtros [posicao, tamanho, transparencia] possuem algum valor */
-				if ((req.query.posicao !== '') && (req.query.tamanho !== '') && (req.query.transparencia !== '')) {
+				if ((req.body.posicao !== '') && (req.body.tamanho !== '') && (req.body.transparencia !== '')) {
 					/* Verifica se os paramêtros [linguagem, posicao, tamanho, transparencia] possuem os seus únicos valores possíveis */
-					if ((parameters.checkPosition(req.query.posicao) === true) && (parameters.checkSize(req.query.tamanho) === true) && (parameters.checkTransparency(req.query.transparencia) === true)) {
+					if ((parameters.checkPosition(req.body.posicao) === true) && (parameters.checkSize(req.body.tamanho) === true) && (parameters.checkTransparency(req.body.transparencia) === true)) {
 						/* Checa se o arquivo de vídeo submetivo possui uma extensão válida */
 						if (parameters.checkVideo(req.files.video.name)) {
 							/* Cria uma pasta cujo o nome é o ID */
@@ -118,9 +115,9 @@ app.post('/api', function(req, res){
 								});
 
 								/* Cria a linha de comando */
-								var command_line = 'vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.query.servico) + ' uploads/' + ID_FROM_BD + '/' +
-													req.files.video.name + ' 1 ' + parameters.getPosition(req.query.posicao) + ' ' + parameters.getSize(req.query.tamanho) + ' ' +
-													parameters.getTransparency(req.query.transparencia) + ' ' + ID_FROM_BD;
+								var command_line = 'vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.body.servico) + ' uploads/' + ID_FROM_BD + '/' +
+													req.files.video.name + ' 1 ' + parameters.getPosition(req.body.posicao) + ' ' + parameters.getSize(req.body.tamanho) + ' ' +
+													parameters.getTransparency(req.body.transparencia) + ' ' + ID_FROM_BD;
 
 								/* Executa a linha de comando */
 								child = exec(command_line, function(err, stdout, stderr) { 
@@ -128,7 +125,7 @@ app.post('/api', function(req, res){
 								 	// console.log(stdout);
 								});
 
-								if (req.query.callback === undefined) {
+								if (req.body.callback === undefined) {
 									/* Listener que dispara quando a requisição ao core finaliza */
 									child.on('close', function(code, signal){
 										res.send(200, { 'response' : 'http://' + SERVER_IP + ':' + port + '/' + ID_FROM_BD + '.flv' });
@@ -141,7 +138,7 @@ app.post('/api', function(req, res){
 									});
 								} else {
 
-									var path = url.parse(req.query.callback);
+									var path = url.parse(req.body.callback);
 
 									var data = querystring.stringify({ 'response' : 'http://' + SERVER_IP + ':' + port + '/' + ID_FROM_BD + '.flv' });
 
@@ -250,9 +247,9 @@ app.post('/api', function(req, res){
 
 			case 'video-legenda':
 				/* Verifica se os paramêtros [transparencia, texto] possuem algum valor */
-				if ((req.query.linguagem !== '') && (req.query.posicao !== '') && (req.query.tamanho !== '') && (req.query.transparencia !== '')) {
+				if ((req.body.linguagem !== '') && (req.body.posicao !== '') && (req.body.tamanho !== '') && (req.body.transparencia !== '')) {
 					/* Verifica se os paramêtros [linguagem, posicao, tamanho, transparencia] possuem os seus únicos valores possíveis */
-					if ((parameters.checkLanguage(req.query.linguagem) === true) && (parameters.checkPosition(req.query.posicao) === true) && (parameters.checkSize(req.query.tamanho) === true) && (parameters.checkTransparency(req.query.transparencia) === true)) {
+					if ((parameters.checkLanguage(req.body.linguagem) === true) && (parameters.checkPosition(req.body.posicao) === true) && (parameters.checkSize(req.body.tamanho) === true) && (parameters.checkTransparency(req.body.transparencia) === true)) {
 						/* Checa se o arquivo de vídeo submetivo possui uma extensão válida */
 						if (parameters.checkVideo(req.files.video.name)) {
 							/* Checa se o arquivo de legenda submetivo possui uma extensão válida */
@@ -274,17 +271,17 @@ app.post('/api', function(req, res){
 									});
 
 									/* Cria a linha de comando */
-									var command_line = 'vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.query.servico) + ' uploads/' + ID_FROM_BD + '/' +
-													req.files.video.name + ' uploads/' + ID_FROM_BD + '/' + req.files.legenda.name + ' ' + parameters.getLanguage(req.query.linguagem) +
-													' ' + parameters.getPosition(req.query.posicao) + ' ' + parameters.getSize(req.query.tamanho) + ' ' +
-													parameters.getTransparency(req.query.transparencia) + ' ' + ID_FROM_BD;
+									var command_line = 'vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.body.servico) + ' uploads/' + ID_FROM_BD + '/' +
+													req.files.video.name + ' uploads/' + ID_FROM_BD + '/' + req.files.legenda.name + ' ' + parameters.getLanguage(req.body.linguagem) +
+													' ' + parameters.getPosition(req.body.posicao) + ' ' + parameters.getSize(req.body.tamanho) + ' ' +
+													parameters.getTransparency(req.body.transparencia) + ' ' + ID_FROM_BD;
 
 									/* Executa a linha de comando */
 									child = exec(command_line, function(err, stdout, stderr) { 
 									 	// [stdout] = vlibras-core output
 									});
 
-									if (req.query.callback === undefined) {
+									if (req.body.callback === undefined) {
 										/* Listener que dispara quando a requisição ao core finaliza */
 										child.on('close', function(code, signal){
 											res.send(200, { 'response' : 'http://' + SERVER_IP + ':' + port + '/' + ID_FROM_BD + '.flv' });
@@ -292,7 +289,7 @@ app.post('/api', function(req, res){
 										});
 									} else {
 
-										var path = url.parse(req.query.callback);
+										var path = url.parse(req.body.callback);
 
 										var data = querystring.stringify({ 'response' : 'http://' + SERVER_IP + ':' + port + '/' + ID_FROM_BD + '.flv' });
 
