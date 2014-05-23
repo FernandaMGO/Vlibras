@@ -30,13 +30,13 @@ app.post('/api', function(req, res){
 			/* Case para o Tipo de Serviço: Texto */
 			case 'texto':
 				/* Verifica se os paramêtros [transparencia, texto] possuem algum valor */
-				if ((req.query.transparencia !== '') && (req.query.texto !== '')) {
+				if ((req.body.transparencia !== '') && (req.body.texto !== '')) {
 					/* Verifica se o paramêtro [transparencia] possui os únicos valores possíveis [opaco, transparente] */
-					if (parameters.checkTransparency(req.query.transparencia)) {
+					if (parameters.checkTransparency(req.body.transparencia)) {
 						/* Cria a linha de comando */
-						var command_line = 'echo ' + req.query.texto + ' >> ' + __dirname + '/text_files/' + ID_FROM_BD + ' && cd ../vlibras-core' +
-											' && ./vlibras ' + parameters.getServiceType(req.query.servico) + ' ../vlibras-api/text_files/' + 
-											ID_FROM_BD + ' ' + parameters.getTransparency(req.query.transparencia) + ' ' + ID_FROM_BD + ' WEB';
+						var command_line = 'echo ' + req.body.texto + ' >> ' + __dirname + '/text_files/' + ID_FROM_BD + ' && cd ../vlibras-core' +
+											' && ./vlibras ' + parameters.getServiceType(req.body.servico) + ' ../vlibras-api/text_files/' + 
+											ID_FROM_BD + ' ' + parameters.getTransparency(req.body.transparencia) + ' ' + ID_FROM_BD + ' WEB';
 
 						/* Executa a linha de comando */
 						child = exec(command_line, function(err, stdout, stderr) { 
@@ -65,13 +65,13 @@ app.post('/api', function(req, res){
 			/* Case para o Tipo de Serviço: iOS */
 			case 'ios':
 				/* Verifica se os paramêtros [transparencia, texto] possuem algum valor */
-				if ((req.query.transparencia !== '') && (req.query.texto !== '')) {
+				if ((req.body.transparencia !== '') && (req.body.texto !== '')) {
 					/* Verifica se o paramêtro [transparencia] possui os únicos valores possíveis [opaco, transparente] */
-					if (parameters.checkTransparency(req.query.transparencia)) {
+					if (parameters.checkTransparency(req.body.transparencia)) {
 						/* Cria a linha de comando */
-						var command_line = 'echo ' + req.query.texto + ' >> ' + __dirname + '/text_files/' + ID_FROM_BD + ' && cd ../vlibras-core' +
-											' && ./vlibras ' + parameters.getServiceType(req.query.servico) + ' ../vlibras-api/text_files/' + 
-											ID_FROM_BD + ' ' + parameters.getTransparency(req.query.transparencia) + ' ' + ID_FROM_BD + ' IOS';
+						var command_line = 'echo ' + req.body.texto + ' >> ' + __dirname + '/text_files/' + ID_FROM_BD + ' && cd ../vlibras-core' +
+											' && ./vlibras ' + parameters.getServiceType(req.body.servico) + ' ../vlibras-api/text_files/' + 
+											ID_FROM_BD + ' ' + parameters.getTransparency(req.body.transparencia) + ' ' + ID_FROM_BD + ' IOS';
 
 						/* Executa a linha de comando */
 						child = exec(command_line, function(err, stdout, stderr) { 
@@ -199,9 +199,9 @@ app.post('/api', function(req, res){
 
 			case 'legenda':
 				/* Verifica se o paramêtro [transparencia] possue algum valor */
-				if (req.query.transparencia !== '') {
+				if (req.body.transparencia !== '') {
 					/* Verifica se os paramêtros [transparencia] possuem os seus únicos valores possíveis */
-					if ((parameters.checkTransparency(req.query.transparencia) === true)) {
+					if ((parameters.checkTransparency(req.body.transparencia) === true)) {
 						/* Checa se o arquivo de legenda submetivo possui uma extensão válida */
 						if (parameters.checkSubtitle(req.files.legenda.name)) {
 							/* Cria uma pasta cujo o nome é o ID */
@@ -215,8 +215,8 @@ app.post('/api', function(req, res){
 								});
 
 								/* Cria a linha de comando */
-								var command_line = 'vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.query.servico) + ' uploads/' + ID_FROM_BD + '/' +
-													req.files.legenda.name + ' ' + parameters.getTransparency(req.query.transparencia) + ' ' + ID_FROM_BD;
+								var command_line = 'vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.body.servico) + ' uploads/' + ID_FROM_BD + '/' +
+													req.files.legenda.name + ' ' + parameters.getTransparency(req.body.transparencia) + ' ' + ID_FROM_BD;
 
 								/* Executa a linha de comando */
 								child = exec(command_line, function(err, stdout, stderr) { 
