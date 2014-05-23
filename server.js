@@ -98,7 +98,7 @@ app.post('/api', function(req, res){
 			break;
 
 			case 'video':
-				console.log('Posição: ' + req.query.posicao + ', Tamanho: ' + req.query.tamanho + ', Transparência: ' + req.query.transparencia);
+				console.log('Posição: ' + req.query.posicao + ', Tamanho: ' + req.query.tamanho + ', Transparência: ' + req.query.transparencia + ', Callback: ' + req.query.callback);
 				/* Verifica se os paramêtros [posicao, tamanho, transparencia] possuem algum valor */
 				if ((req.query.posicao !== '') && (req.query.tamanho !== '') && (req.query.transparencia !== '')) {
 					/* Verifica se os paramêtros [linguagem, posicao, tamanho, transparencia] possuem os seus únicos valores possíveis */
