@@ -1,7 +1,10 @@
 var parameters = require('./helpers/parameters');
 var exec = require('child_process').exec, child;
 var path = require('path');
+var http = require('http');
+var url = require('url');
 var fs = require('fs');
+var querystring = require('querystring');
 var express = require('express');
 
 var host = '0.0.0.0';
@@ -229,11 +232,39 @@ app.post('/api', function(req, res){
 									 	// [stdout] = vlibras-core output
 									});
 
-									/* Listener que dispara quando a requisição ao core finaliza */
-									child.on('close', function(code, signal){
-										res.send(200, { 'response' : 'http://' + SERVER_IP + ':' + port + '/' + ID_FROM_BD + '.flv' });
-										ID_FROM_BD++;
-									});
+									if (req.query.callback === undefined) {
+										/* Listener que dispara quando a requisição ao core finaliza */
+										child.on('close', function(code, signal){
+											res.send(200, { 'response' : 'http://' + SERVER_IP + ':' + port + '/' + ID_FROM_BD + '.flv' });
+											ID_FROM_BD++;
+										});
+									} else {
+
+										var path = url.parse(req.query.callback);
+
+										var data = querystring.stringify({ 'response' : 'http://' + SERVER_IP + ':' + port + '/' + ID_FROM_BD + '.flv' });
+
+										var options = {
+											host: path.hostname,
+											port: path.port,
+											path: path.path,
+											method: 'POST',
+										    headers: {
+										        'Content-Type': 'application/x-www-form-urlencoded',
+										        'Content-Length': Buffer.byteLength(data)
+										    }
+										};
+
+										var requesting = http.request(options, function(res) {
+										    res.setEncoding('utf8');
+										    res.on('data', function (chunk) {
+										        console.log("body: " + chunk);
+										    });
+										});
+
+										requesting.write(data);
+										requesting.end();
+									}
 
 									/* Listener que dispara quando a requisição ao core da erro */
 									child.on('error', function(code, signal){
