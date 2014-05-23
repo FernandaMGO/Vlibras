@@ -24,9 +24,9 @@ app.get('/', function(req, res){
 
 app.post('/api', function(req, res){
 	/* Verifica se o paramêtro [servico] possui algum valor */
-	if (req.query.servico !== '') {
+	if (req.body.servico !== '') {
 		/* Verifica qual é o Tipo de Serviço fornecido */ 
-		switch(req.query.servico) {
+		switch(req.body.servico) {
 			/* Case para o Tipo de Serviço: Texto */
 			case 'texto':
 				/* Verifica se os paramêtros [transparencia, texto] possuem algum valor */
