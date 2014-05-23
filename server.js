@@ -23,8 +23,9 @@ app.get('/', function(req, res){
 });
 
 app.post('/api', function(req, res){
-	console.log('Query: \n' + req.query);
-	console.log('Params: \n' + req.params);
+	console.log(req.query);
+	console.log(req.params);
+	console.log(req.body);
 	/* Verifica se o paramêtro [servico] possui algum valor */
 	if (req.query.servico !== '') {
 		/* Verifica qual é o Tipo de Serviço fornecido */ 
