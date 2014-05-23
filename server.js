@@ -184,6 +184,8 @@ app.post('/api', function(req, res){
 										requesting.write(data);
 										requesting.end();
 									});
+
+									res.send(200);
 								}
 							});
 						} else {
