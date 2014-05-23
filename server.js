@@ -123,7 +123,9 @@ app.post('/api', function(req, res){
 								/* Executa a linha de comando */
 								child = exec(command_line, function(err, stdout, stderr) { 
 								 	// [stdout] = vlibras-core output
+								 	console.log(err);
 								 	console.log(stdout);
+								 	console.log(stderr);
 								});
 
 								if (req.body.callback === undefined) {
