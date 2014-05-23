@@ -24,7 +24,6 @@ app.get('/', function(req, res){
 
 app.post('/api', function(req, res){
 	console.log(req.body);
-	console.log(req.files);
 	/* Verifica se o paramêtro [servico] possui algum valor */
 	if (req.body.servico !== '') {
 		/* Verifica qual é o Tipo de Serviço fornecido */ 
