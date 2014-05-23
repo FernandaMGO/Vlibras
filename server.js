@@ -125,16 +125,65 @@ app.post('/api', function(req, res){
 								 	// console.log(stdout);
 								});
 
-								/* Listener que dispara quando a requisição ao core finaliza */
-								child.on('close', function(code, signal){
-									res.send(200, { 'response' : 'http://' + SERVER_IP + ':' + port + '/' + ID_FROM_BD + '.flv' });
-									ID_FROM_BD++;
-								});
+								if (req.query.callback === undefined) {
+									/* Listener que dispara quando a requisição ao core finaliza */
+									child.on('close', function(code, signal){
+										res.send(200, { 'response' : 'http://' + SERVER_IP + ':' + port + '/' + ID_FROM_BD + '.flv' });
+										ID_FROM_BD++;
+									});
 
-								/* Listener que dispara quando a requisição ao core da erro */
-								child.on('error', function(code, signal){
-									res.send(500, parameters.errorMessage('Erro na chamada ao core'));
-								});
+									/* Listener que dispara quando a requisição ao core da erro */
+									child.on('error', function(code, signal){
+										res.send(500, parameters.errorMessage('Erro na chamada ao core'));
+									});
+								} else {
+
+									var path = url.parse(req.query.callback);
+
+									var data = querystring.stringify({ 'response' : 'http://' + SERVER_IP + ':' + port + '/' + ID_FROM_BD + '.flv' });
+
+									var options = {
+										host: path.hostname,
+										port: path.port,
+										path: path.path,
+										method: 'POST',
+									    headers: {
+									        'Content-Type': 'application/x-www-form-urlencoded',
+									        'Content-Length': Buffer.byteLength(data)
+									    }
+									};
+
+									var requesting = http.request(options, function(res) {
+									    res.setEncoding('utf8');
+									});
+
+									requesting.write(data);
+									requesting.end();
+
+									/* Listener que dispara quando a requisição ao core da erro */
+									child.on('error', function(code, signal){
+
+										var data = querystring.stringify(parameters.errorMessage('Erro na chamada ao core'));
+
+										var options = {
+											host: path.hostname,
+											port: path.port,
+											path: path.path,
+											method: 'POST',
+										    headers: {
+										        'Content-Type': 'application/x-www-form-urlencoded',
+										        'Content-Length': Buffer.byteLength(data)
+										    }
+										};
+
+										var requesting = http.request(options, function(res) {
+										    res.setEncoding('utf8');
+										});
+
+										requesting.write(data);
+										requesting.end();
+									});
+								}
 							});
 						} else {
 							res.send(500, parameters.errorMessage('Vídeo com Extensão Inválida'));
