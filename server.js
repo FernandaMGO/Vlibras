@@ -317,7 +317,26 @@ app.post('/api', function(req, res){
 
 									/* Listener que dispara quando a requisição ao core da erro */
 									child.on('error', function(code, signal){
-										res.send(500, parameters.errorMessage('Erro na chamada ao core'));
+
+										var data = querystring.stringify(parameters.errorMessage('Erro na chamada ao core'));
+
+										var options = {
+											host: path.hostname,
+											port: path.port,
+											path: path.path,
+											method: 'POST',
+										    headers: {
+										        'Content-Type': 'application/x-www-form-urlencoded',
+										        'Content-Length': Buffer.byteLength(data)
+										    }
+										};
+
+										var requesting = http.request(options, function(res) {
+										    res.setEncoding('utf8');
+										});
+
+										requesting.write(data);
+										requesting.end();
 									});
 								});
 							} else {
