@@ -9,19 +9,19 @@ var fs = require('fs');
 
 function init(req, res) {
 	/* Verifica se os paramêtros [posicao, tamanho, transparencia] possuem algum valor */
-	if ((req.body.posicao !== '') && (req.body.tamanho !== '') && (req.body.transparencia !== '')) {
+	if ((req.body.posicao === '') || (req.body.tamanho === '') || (req.body.transparencia === '')) {
 		res.send(500, parameters.errorMessage('O valor de algum parâmetro está vazio'));
 		return;
 	}
 
 	/* Verifica se os paramêtros [linguagem, posicao, tamanho, transparencia] possuem os seus únicos valores possíveis */
-	if ((parameters.checkPosition(req.body.posicao) === true) && (parameters.checkSize(req.body.tamanho) === true) && (parameters.checkTransparency(req.body.transparencia) === true)) {
+	if ((parameters.checkPosition(req.body.posicao) === false) || (parameters.checkSize(req.body.tamanho) === false) || (parameters.checkTransparency(req.body.transparencia) === false)) {
 		res.send(500, parameters.errorMessage('Parâmetros insuficientes ou inválidos'));
 		return;
 	}
 
 	/* Checa se o arquivo de vídeo submetivo possui uma extensão válida */
-	if (parameters.checkVideo(req.files.video.name)) {
+	if (parameters.checkVideo(req.files.video.name) === false) {
 		res.send(500, parameters.errorMessage('Vídeo com Extensão Inválida'));
 		return;
 	}
