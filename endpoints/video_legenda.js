@@ -80,6 +80,8 @@ function init(req, res) {
 
 			child.on('close', function(code, signal){
 				if (code !== 0) {
+					var path = url.parse(req.body.callback);
+
 					var data = querystring.stringify( { 'error': 'Erro no Core', 'code': code } );
 
 					var options = {
@@ -131,6 +133,7 @@ function init(req, res) {
 
 			/* Listener que dispara quando a requisição ao core da erro */
 			child.on('error', function(code, signal){
+				var path = url.parse(req.body.callback);
 
 				var data = querystring.stringify( { 'error': 'Erro na chamada ao Core', 'code': code } );
 
