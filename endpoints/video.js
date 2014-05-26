@@ -3,6 +3,7 @@ var properties = require('../helpers/properties');
 
 var exec = require('child_process').exec, child;
 var querystring = require('querystring');
+var mkdirp = require('mkdirp');
 var http = require('http');
 var url = require('url');
 var fs = require('fs');
@@ -26,14 +27,14 @@ function init(req, res) {
 		return;
 	}
 
-	/* Cria uma pasta cujo o nome é o ID */
-	child = exec('mkdir ' + __dirname + '/uploads/' + properties.ID_FROM_BD);
+	/* Cria uma pasta cujo o nome é o ID atual */
+	mkdirp('/home/libras/vlibras-api/uploads/' + properties.ID_FROM_BD, function(error) {
+	
+		if (error) { console.log(error); res.send(500, parameters.errorMessage('Erro na criação da pasta com o ID: ' + properties.ID_FROM_BD)); return; }
 
-	/* Listener que dispara quando a pasta é criada */
-	child.on('close', function(code, signal){
 		/* Move o vídeo submetido para a pasta com o seu ID correspondente */
-		fs.rename(req.files.video.path, __dirname + '/uploads/' + properties.ID_FROM_BD + '/' + req.files.video.name, function(error) {
-			if (error) { console.log(error); }
+		fs.rename(req.files.video.path, properties.uploads_folder + properties.ID_FROM_BD + '/' + req.files.video.name, function(error) {
+			if (error) { console.log(error); res.send(500, parameters.errorMessage('Erro ao mover a pasta com o ID: ' + properties.ID_FROM_BD)); return; }
 		});
 
 		/* Cria a linha de comando */
