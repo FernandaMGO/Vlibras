@@ -47,9 +47,9 @@ function init(req, res) {
 		/* Executa a linha de comando */
 		child = exec(command_line, function(err, stdout, stderr) { 
 		 	// [stdout] = vlibras-core output
-			console.log('Err: ' + err);
-			console.log('STDOUT: ' + stdout);
-			console.log('STDERR: ' + stderr);
+			// console.log('Err: ' + err);
+			// console.log('STDOUT: ' + stdout);
+			// console.log('STDERR: ' + stderr);
 		});
 
 		if (req.body.callback === undefined) {
