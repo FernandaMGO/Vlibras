@@ -2,6 +2,7 @@ var parameters = require('../helpers/parameters');
 var properties = require('../helpers/properties');
 
 var exec = require('child_process').exec, child;
+var mkdirp = require('mkdirp');
 var querystring = require('querystring');
 var http = require('http');
 var url = require('url');
@@ -32,19 +33,18 @@ function init(req, res) {
 		return;
 	}
 
-	/* Cria uma pasta cujo o nome é o ID */
-	child = exec('mkdir ' + __dirname + '/uploads/' + properties.ID_FROM_BD);
-
-	/* Listener que dispara quando a pasta é criada */
-	child.on('close', function(code, signal){
+	/* Cria uma pasta cujo o nome é o ID atual */
+	mkdirp('/home/libras/vlibras-api/uploads/' + properties.ID_FROM_BD, function(error) {
+	
+		if (error) { console.log(error); return; }
 
 		/* Move o vídeo submetido para a pasta com o seu ID correspondente */
-		fs.rename(req.files.video.path, __dirname + '/uploads/' + properties.ID_FROM_BD + '/' + req.files.video.name, function(error) {
+		fs.rename(req.files.video.path, '/home/libras/vlibras-api/uploads/' + properties.ID_FROM_BD + '/' + req.files.video.name, function(error) {
 			if (error) { console.log(error); }
 		});
 
 		/* Move a legenda submetido para a pasta com o seu ID correspondente */
-		fs.rename(req.files.legenda.path, __dirname + '/uploads/' + properties.ID_FROM_BD + '/' + req.files.legenda.name, function(error) {
+		fs.rename(req.files.legenda.path, '/home/libras/vlibras-api/uploads/' + properties.ID_FROM_BD + '/' + req.files.legenda.name, function(error) {
 			if (error) { console.log(error); }
 		});
 
@@ -57,6 +57,9 @@ function init(req, res) {
 		/* Executa a linha de comando */
 		child = exec(command_line, function(err, stdout, stderr) { 
 		 	// [stdout] = vlibras-core output
+			console.log('Err: ' + err);
+			console.log('STDOUT: ' + stdout);
+			console.log('STDERR: ' + stderr);
 		});
 
 		if (req.body.callback === undefined) {
@@ -72,6 +75,7 @@ function init(req, res) {
 		} else {
 
 			child.on('close', function(code, signal){
+				console.log('Code: ' + code);
 				var path = url.parse(req.body.callback);
 
 				var data = querystring.stringify({ 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + properties.ID_FROM_BD + '.flv' });
