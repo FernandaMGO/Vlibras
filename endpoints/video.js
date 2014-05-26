@@ -54,7 +54,7 @@ function init(req, res) {
 			/* Listener que dispara quando a requisição ao core finaliza */
 			child.on('close', function(code, signal){
 				if (code !== 0) {
-					{ console.log(error); res.send(500, { 'error': 'Erro no Core', 'code': code }); return; }
+					console.log('Erro código: ' + code); res.send(500, { 'error': 'Erro no Core', 'code': code }); return;
 				}
 
 				res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + properties.ID_FROM_BD + '.flv' });
@@ -68,7 +68,25 @@ function init(req, res) {
 
 			child.on('close', function(code, signal){
 				if (code !== 0) {
-					{ console.log(error); res.send(500, { 'error': 'Erro no Core', 'code': code }); return; }
+					var data = querystring.stringify( { 'error': 'Erro no Core', 'code': code } );
+
+					var options = {
+						host: path.hostname,
+						port: path.port,
+						path: path.path,
+						method: 'POST',
+					    headers: {
+					        'Content-Type': 'application/x-www-form-urlencoded',
+					        'Content-Length': Buffer.byteLength(data)
+					    }
+					};
+
+					var requesting = http.request(options, function(res) {
+					    res.setEncoding('utf8');
+					});
+
+					requesting.write(data);
+					requesting.end();
 				}
 
 				var path = url.parse(req.body.callback);
@@ -102,7 +120,7 @@ function init(req, res) {
 			/* Listener que dispara quando a requisição ao core da erro */
 			child.on('error', function(code, signal){
 
-				var data = querystring.stringify(parameters.errorMessage('Erro na chamada ao core'));
+				var data = querystring.stringify( { 'error': 'Erro na chamada ao Core', 'code': code } );
 
 				var options = {
 					host: path.hostname,
