@@ -66,7 +66,7 @@ function init(req, res) {
 			/* Listener que dispara quando a requisição ao core finaliza */
 			child.on('close', function(code, signal){
 				if (code !== 0) {
-					{ console.log(error); res.send(500, { 'error': 'Erro no Core', 'code': code } return; }
+					{ console.log(error); res.send(500, { 'error': 'Erro no Core', 'code': code }); return; }
 				}
 
 				res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + properties.ID_FROM_BD + '.flv' });
@@ -80,7 +80,7 @@ function init(req, res) {
 
 			child.on('close', function(code, signal){
 				if (code !== 0) {
-					{ console.log(error); res.send(500, { 'error': 'Erro no Core', 'code': code } return; }
+					{ console.log(error); res.send(500, { 'error': 'Erro no Core', 'code': code }); return; }
 				}
 
 				var path = url.parse(req.body.callback);
