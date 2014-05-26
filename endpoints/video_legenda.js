@@ -40,12 +40,12 @@ function init(req, res) {
 
 		/* Move o vídeo submetido para a pasta com o seu ID correspondente */
 		fs.rename(req.files.video.path, '/home/libras/vlibras-api/uploads/' + properties.ID_FROM_BD + '/' + req.files.video.name, function(error) {
-			if (error) { console.log(error); }
+			if (error) { console.log(error); res.send(500, parameters.errorMessage('Erro ao mover o vídeo submetido')); return; }
 		});
 
 		/* Move a legenda submetido para a pasta com o seu ID correspondente */
 		fs.rename(req.files.legenda.path, '/home/libras/vlibras-api/uploads/' + properties.ID_FROM_BD + '/' + req.files.legenda.name, function(error) {
-			if (error) { console.log(error); }
+			if (error) { console.log(error); res.send(500, parameters.errorMessage('Erro ao mover a legenda submetido')); return; }
 		});
 
 		/* Cria a linha de comando */
@@ -65,7 +65,10 @@ function init(req, res) {
 		if (req.body.callback === undefined) {
 			/* Listener que dispara quando a requisição ao core finaliza */
 			child.on('close', function(code, signal){
-				console.log('Code: ' + code);
+				if (code !== 0) {
+					{ console.log(error); res.send(500, { 'error': 'Erro no Core', 'code': code } return; }
+				}
+
 				res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + properties.ID_FROM_BD + '.flv' });
 				properties.ID_FROM_BD++;
 			});
@@ -76,7 +79,10 @@ function init(req, res) {
 		} else {
 
 			child.on('close', function(code, signal){
-				console.log('Code: ' + code);
+				if (code !== 0) {
+					{ console.log(error); res.send(500, { 'error': 'Erro no Core', 'code': code } return; }
+				}
+
 				var path = url.parse(req.body.callback);
 
 				var data = querystring.stringify({ 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + properties.ID_FROM_BD + '.flv' });
