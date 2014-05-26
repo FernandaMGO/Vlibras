@@ -42,6 +42,8 @@ function init(req, res) {
 							req.files.video.name + ' 1 ' + parameters.getPosition(req.body.posicao) + ' ' + parameters.getSize(req.body.tamanho) + ' ' +
 							parameters.getTransparency(req.body.transparencia) + ' ' + properties.ID_FROM_BD;
 
+		console.log(command_line);
+
 		/* Executa a linha de comando */
 		child = exec(command_line, function(err, stdout, stderr) { 
 		 	// [stdout] = vlibras-core output
@@ -63,6 +65,7 @@ function init(req, res) {
 
 			child.on('error', function(code, signal){
 				res.send(500, parameters.errorMessage('Erro na chamada ao core'));
+				properties.ID_FROM_BD++;
 			});
 		} else {
 
@@ -89,6 +92,8 @@ function init(req, res) {
 
 					requesting.write(data);
 					requesting.end();
+
+					properties.ID_FROM_BD++;
 
 					return;
 				}
@@ -144,6 +149,8 @@ function init(req, res) {
 
 				requesting.write(data);
 				requesting.end();
+
+				properties.ID_FROM_BD++;
 			});
 
 			res.send(200);

@@ -54,6 +54,8 @@ function init(req, res) {
 						' ' + parameters.getPosition(req.body.posicao) + ' ' + parameters.getSize(req.body.tamanho) + ' ' +
 						parameters.getTransparency(req.body.transparencia) + ' ' + properties.ID_FROM_BD;
 
+		console.log(command_line);
+
 		/* Executa a linha de comando */
 		child = exec(command_line, function(err, stdout, stderr) { 
 		 	// [stdout] = vlibras-core output
@@ -101,6 +103,8 @@ function init(req, res) {
 
 					requesting.write(data);
 					requesting.end();
+
+					properties.ID_FROM_BD++;
 
 					return;
 				}
@@ -156,6 +160,8 @@ function init(req, res) {
 
 				requesting.write(data);
 				requesting.end();
+
+				properties.ID_FROM_BD++;
 			});
 
 			res.send(200);
