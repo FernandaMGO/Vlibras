@@ -89,11 +89,9 @@ function checkServiceType(service_type) {
 		if (service_type === t_types[i]) {
 			return true;
 		}
-
-		if ((i + 1) === t_types.length) {
-			return false;
-		}
 	}
+
+	return false;
 };
 
 function checkLanguage(language) {
@@ -103,11 +101,9 @@ function checkLanguage(language) {
 		if (language === t_types[i]) {
 			return true;
 		}
-
-		if ((i + 1) === t_types.length) {
-			return false;
-		}
 	}
+
+	return false;
 };
 
 function checkPosition(position) {
@@ -117,11 +113,9 @@ function checkPosition(position) {
 		if (position === t_types[i]) {
 			return true;
 		}
-
-		if ((i + 1) === t_types.length) {
-			return false;
-		}
 	}
+
+	return false;
 };
 
 function checkSize(size) {
@@ -131,11 +125,9 @@ function checkSize(size) {
 		if (size === t_types[i]) {
 			return true;
 		}
-
-		if ((i + 1) === t_types.length) {
-			return false;
-		}
 	}
+
+	return false;
 };
 
 function checkTransparency(transparency) {
@@ -145,11 +137,9 @@ function checkTransparency(transparency) {
 		if (transparency === t_types[i]) {
 			return true;
 		}
-
-		if ((i + 1) === t_types.length) {
-			return false;
-		}
 	}
+
+	return false;
 };
 
 function checkVideo(file) {
