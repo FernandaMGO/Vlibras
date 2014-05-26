@@ -39,12 +39,12 @@ function init(req, res) {
 		if (error) { console.log(error); return; }
 
 		/* Move o vídeo submetido para a pasta com o seu ID correspondente */
-		fs.rename(req.files.video.path, properties.uploads_folder + properties.ID_FROM_BD + '/' + req.files.video.name, function(error) {
+		fs.rename(req.files.video.path, '/home/libras/vlibras-api/uploads/' + properties.ID_FROM_BD + '/' + req.files.video.name, function(error) {
 			if (error) { console.log(error); }
 		});
 
 		/* Move a legenda submetido para a pasta com o seu ID correspondente */
-		fs.rename(req.files.legenda.path, properties.uploads_folder + properties.ID_FROM_BD + '/' + req.files.legenda.name, function(error) {
+		fs.rename(req.files.legenda.path, '/home/libras/vlibras-api/uploads/' + properties.ID_FROM_BD + '/' + req.files.legenda.name, function(error) {
 			if (error) { console.log(error); }
 		});
 
