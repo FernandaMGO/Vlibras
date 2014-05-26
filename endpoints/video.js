@@ -89,6 +89,8 @@ function init(req, res) {
 
 					requesting.write(data);
 					requesting.end();
+
+					return;
 				}
 
 				var path = url.parse(req.body.callback);
