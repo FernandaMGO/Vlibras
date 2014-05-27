@@ -15,13 +15,16 @@ sym_link:
 run:
 	@forever start server.js
 
-stop:
+node: clean
+	@node server.js
+
+stop: clean
 	@forever stop server.js
 
 list:
 	@forever list
 
 clean:
-	@rm text_files/* 
-	@rm videos/*
-	@rm -r uploads/* 
+	@rm -f text_files/* 
+	@rm -f videos/*
+	@rm -rf uploads/* 
