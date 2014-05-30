@@ -91,7 +91,7 @@ function init(req, res) {
 					});
 
 					requesting.on('error', function (e) {
-				        console.log("The callback URL isn't reachable");
+				        console.log("The callback URL can not be reachable");
 				    });
 
 					requesting.write(data);
@@ -121,8 +121,8 @@ function init(req, res) {
 				    res.setEncoding('utf8');
 				});
 
-			    requesting.on('error', function (e) {
-			        console.log("The callback URL isn't reachable");
+				requesting.on('error', function (e) {
+			        console.log("The callback URL can not be reachable");
 			    });
 
 				requesting.write(data);
@@ -152,8 +152,8 @@ function init(req, res) {
 				    res.setEncoding('utf8');
 				});
 
-			    requesting.on('error', function (e) {
-			        console.log("The callback URL isn't reachable");
+				requesting.on('error', function (e) {
+			        console.log("The callback URL can not be reachable");
 			    });
 
 				requesting.write(data);

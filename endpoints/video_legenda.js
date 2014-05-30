@@ -101,6 +101,10 @@ function init(req, res) {
 					    res.setEncoding('utf8');
 					});
 
+					requesting.on('error', function (e) {
+				        console.log("The callback URL can not be reachable");
+				    });
+
 					requesting.write(data);
 					requesting.end();
 
@@ -126,10 +130,11 @@ function init(req, res) {
 
 				var requesting = http.request(options, function(res) {
 				    res.setEncoding('utf8');
-				    // res.on('data', function (chunk) {
-				    //     console.log("req.body: " + chunk);
-				    // });
 				});
+
+				requesting.on('error', function (e) {
+			        console.log("The callback URL can not be reachable");
+			    });
 
 				requesting.write(data);
 				requesting.end();
@@ -157,6 +162,10 @@ function init(req, res) {
 				var requesting = http.request(options, function(res) {
 				    res.setEncoding('utf8');
 				});
+
+				requesting.on('error', function (e) {
+			        console.log("The callback URL can not be reachable");
+			    });
 
 				requesting.write(data);
 				requesting.end();
