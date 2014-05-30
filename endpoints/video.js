@@ -88,10 +88,11 @@ function init(req, res) {
 
 					var requesting = http.request(options, function(res) {
 					    res.setEncoding('utf8');
-					    res.on('error', function (e) {
-					        console.log("The callback URL isn't reachable");
-					    });
 					});
+
+					requesting.on('error', function (e) {
+				        console.log("The callback URL isn't reachable");
+				    });
 
 					requesting.write(data);
 					requesting.end();
@@ -118,10 +119,11 @@ function init(req, res) {
 
 				var requesting = http.request(options, function(res) {
 				    res.setEncoding('utf8');
-				    res.on('error', function (e) {
-				        console.log("The callback URL isn't reachable");
-				    });
 				});
+
+			    requesting.on('error', function (e) {
+			        console.log("The callback URL isn't reachable");
+			    });
 
 				requesting.write(data);
 				requesting.end();
@@ -148,10 +150,11 @@ function init(req, res) {
 
 				var requesting = http.request(options, function(res) {
 				    res.setEncoding('utf8');
-				    res.on('error', function (e) {
-				        console.log("The callback URL isn't reachable");
-				    });
 				});
+
+			    requesting.on('error', function (e) {
+			        console.log("The callback URL isn't reachable");
+			    });
 
 				requesting.write(data);
 				requesting.end();
