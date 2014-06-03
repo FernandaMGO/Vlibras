@@ -3,12 +3,16 @@ var properties = require('../helpers/properties');
 
 var exec = require('child_process').exec, child;
 var querystring = require('querystring');
+var uuid = require('node-uuid');
 var mkdirp = require('mkdirp');
 var http = require('http');
 var url = require('url');
 var fs = require('fs');
 
 function init(req, res) {
+
+	var id = uuid.v4();
+
 	/* Verifica se os paramêtros [posicao, tamanho, transparencia] possuem algum valor */
 	if ((req.body.posicao === '') || (req.body.tamanho === '') || (req.body.transparencia === '')) {
 		res.send(500, parameters.errorMessage('O valor de algum parâmetro está vazio'));
@@ -28,19 +32,19 @@ function init(req, res) {
 	}
 
 	/* Cria uma pasta cujo o nome é o ID atual */
-	mkdirp('/home/libras/vlibras-api/uploads/' + properties.ID_FROM_BD, function(error) {
+	mkdirp('/home/libras/vlibras-api/uploads/' + id, function(error) {
 	
-		if (error) { console.log(error); res.send(500, parameters.errorMessage('Erro na criação da pasta com o ID: ' + properties.ID_FROM_BD)); return; }
+		if (error) { console.log(error); res.send(500, parameters.errorMessage('Erro na criação da pasta com o ID: ' + id)); return; }
 
 		/* Move o vídeo submetido para a pasta com o seu ID correspondente */
-		fs.rename(req.files.video.path, '/home/libras/vlibras-api/uploads/' + properties.ID_FROM_BD + '/' + req.files.video.name, function(error) {
+		fs.rename(req.files.video.path, '/home/libras/vlibras-api/uploads/' + id + '/' + req.files.video.name, function(error) {
 			if (error) { console.log(error); res.send(500, parameters.errorMessage('Erro ao mover o vídeo submetido')); return; }
 		});
 
 		/* Cria a linha de comando */
-		var command_line = 'vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.body.servico) + ' uploads/' + properties.ID_FROM_BD + '/' +
+		var command_line = 'vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.body.servico) + ' uploads/' + id + '/' +
 							req.files.video.name + ' 1 ' + parameters.getPosition(req.body.posicao) + ' ' + parameters.getSize(req.body.tamanho) + ' ' +
-							parameters.getTransparency(req.body.transparencia) + ' ' + properties.ID_FROM_BD;
+							parameters.getTransparency(req.body.transparencia) + ' ' + id;
 
 		console.log(command_line);
 
@@ -59,13 +63,11 @@ function init(req, res) {
 					console.log('Erro código: ' + code); res.send(500, { 'error': 'Erro no Core', 'code': code }); return;
 				}
 
-				res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + properties.ID_FROM_BD + '.flv' });
-				properties.ID_FROM_BD++;
+				res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.flv' });
 			});
 
 			child.on('error', function(code, signal){
 				res.send(500, parameters.errorMessage('Erro na chamada ao core'));
-				properties.ID_FROM_BD++;
 			});
 		} else {
 
@@ -97,14 +99,12 @@ function init(req, res) {
 					requesting.write(data);
 					requesting.end();
 
-					properties.ID_FROM_BD++;
-
 					return;
 				}
 
 				var path = url.parse(req.body.callback);
 
-				var data = querystring.stringify({ 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + properties.ID_FROM_BD + '.flv' });
+				var data = querystring.stringify({ 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.flv' });
 
 				var options = {
 					host: path.hostname,
@@ -127,8 +127,6 @@ function init(req, res) {
 
 				requesting.write(data);
 				requesting.end();
-
-				properties.ID_FROM_BD++;
 			});
 
 			/* Listener que dispara quando a requisição ao core da erro */
@@ -158,8 +156,6 @@ function init(req, res) {
 
 				requesting.write(data);
 				requesting.end();
-
-				properties.ID_FROM_BD++;
 			});
 
 			res.send(200);
