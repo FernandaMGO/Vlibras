@@ -2,9 +2,13 @@ var parameters = require('../helpers/parameters');
 var properties = require('../helpers/properties');
 
 var exec = require('child_process').exec, child;
+var uuid = require('node-uuid');
 var fs = require('fs');
 
 function init(req, res) {
+
+	var id = uuid.v4();
+
 	/* Verifica se os paramêtros [transparencia, texto] possuem algum valor */
 	if ((req.body.transparencia !== '') && (req.body.texto !== '')) {
 		res.send(500, parameters.errorMessage('O valor de algum parâmetro está vazio'));
@@ -18,9 +22,9 @@ function init(req, res) {
 	}
 
 	/* Cria a linha de comando */
-	var command_line = 'echo ' + req.body.texto + ' >> ' + __dirname + '/text_files/' + properties.ID_FROM_BD + ' && cd ../vlibras-core' +
+	var command_line = 'echo ' + req.body.texto + ' >> ' + __dirname + '/text_files/' + id + ' && cd ../vlibras-core' +
 						' && ./vlibras ' + parameters.getServiceType(req.body.servico) + ' ../vlibras-api/text_files/' + 
-						properties.ID_FROM_BD + ' ' + parameters.getTransparency(req.body.transparencia) + ' ' + properties.ID_FROM_BD + ' IOS';
+						id + ' ' + parameters.getTransparency(req.body.transparencia) + ' ' + id + ' IOS';
 
 	/* Executa a linha de comando */
 	child = exec(command_line, function(err, stdout, stderr) { 
@@ -30,8 +34,7 @@ function init(req, res) {
 
 	/* Listener que dispara quando a requisição ao core finaliza */
 	child.on('close', function(code, signal){
-		res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + properties.ID_FROM_BD + '.avi' });
-		properties.ID_FROM_BD++;
+		res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.avi' });
 	});
 
 	/* Listener que dispara quando a requisição ao core da erro */
