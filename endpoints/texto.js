@@ -10,21 +10,22 @@ function init(req, res) {
 	var id = uuid.v4();
 
 	/* Verifica se os paramêtros [transparencia, texto] possuem algum valor */
-	if ((req.body.transparencia !== '') && (req.body.texto !== '')) {
+	if ((req.body.transparencia === '') || (req.body.texto === '')) {
 		res.send(500, parameters.errorMessage('O valor de algum parâmetro está vazio'));
 		return;
 	}
 
 	/* Verifica se o paramêtro [transparencia] possui os únicos valores possíveis [opaco, transparente] */
-	if (parameters.checkTransparency(req.body.transparencia)) {
+	if (parameters.checkTransparency(req.body.transparencia) === false) {
 		res.send(500, parameters.errorMessage('Parâmetros insuficientes ou inválidos'));
 		return;
 	}
 
 	/* Cria a linha de comando */
-	var command_line = 'echo ' + req.body.texto + ' >> ' + __dirname + '/text_files/' + id + ' && cd ../vlibras-core' +
-						' && ./vlibras ' + parameters.getServiceType(req.body.servico) + ' ../vlibras-api/text_files/' + 
-						id + ' ' + parameters.getTransparency(req.body.transparencia) + ' ' + id + ' WEB';
+	var command_line = 'echo ' + req.body.texto + ' >> text_files/' + id + ' && mkdir uploads/' + id + ' && vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.body.servico) + ' text_files/' + 
+						id + ' ' + parameters.getTransparency(req.body.transparencia) + ' ' + id + ' WEB > /tmp/core_log 2>&1';
+
+        console.log(command_line)
 
 	/* Executa a linha de comando */
 	child = exec(command_line, function(err, stdout, stderr) { 

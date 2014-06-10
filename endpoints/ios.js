@@ -10,13 +10,13 @@ function init(req, res) {
 	var id = uuid.v4();
 
 	/* Verifica se os paramêtros [transparencia, texto] possuem algum valor */
-	if ((req.body.transparencia !== '') && (req.body.texto !== '')) {
+	if ((req.body.transparencia === '') || (req.body.texto === '')) {
 		res.send(500, parameters.errorMessage('O valor de algum parâmetro está vazio'));
 		return;
 	}
 
 	/* Verifica se o paramêtro [transparencia] possui os únicos valores possíveis [opaco, transparente] */
-	if (parameters.checkTransparency(req.body.transparencia)) {
+	if (parameters.checkTransparency(req.body.transparencia) === false) {
 		res.send(500, parameters.errorMessage('Parâmetros insuficientes ou inválidos'));
 		return;
 	}
