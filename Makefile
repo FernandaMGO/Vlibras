@@ -18,7 +18,7 @@ run:
 node: clean
 	@node server.js
 
-stop: clean
+stop:
 	@forever stop server.js
 
 list:
