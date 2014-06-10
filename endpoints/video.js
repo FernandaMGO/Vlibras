@@ -44,7 +44,7 @@ function init(req, res) {
 		/* Cria a linha de comando */
 		var command_line = 'vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.body.servico) + ' uploads/' + id + '/' +
 							req.files.video.name + ' 1 ' + parameters.getPosition(req.body.posicao) + ' ' + parameters.getSize(req.body.tamanho) + ' ' +
-							parameters.getTransparency(req.body.transparencia) + ' ' + id;
+							parameters.getTransparency(req.body.transparencia) + ' ' + id + '> /tmp/core_log 2>&1';
 
 		console.log(command_line);
 
