@@ -1,5 +1,6 @@
 var parameters = require('../helpers/parameters');
 var properties = require('../helpers/properties');
+var requests = require('../helpers/requests');
 
 var exec = require('child_process').exec, child;
 var querystring = require('querystring');
@@ -25,25 +26,64 @@ function init(req, res) {
 		return;
 	}
 
+	var video;
+
 	/* Checa se o arquivo de vídeo submetivo possui uma extensão válida */
-	if (parameters.checkVideo(req.files.video.name) === false) {
-		res.send(500, parameters.errorMessage('Vídeo com Extensão Inválida'));
+	if (req.files.video !== undefined) {
+		if (parameters.checkVideo(req.files.video.name) === false) {
+			res.send(500, parameters.errorMessage('Vídeo enviado com extensão inválida'));
+			return;	
+		}	
+
+		video = {
+			'name': req.files.video.name,
+			'path': req.files.video.path
+		}
+
+		processVideo(id, video, req, res);
+
+	} else if (req.body.video_url !== undefined) {
+		http.get(req.body.video_url, function(response) {
+			console.log("video_url: downloading");
+
+			response.pipe(fs.createWriteStream(id));
+
+			video = {
+				'name': req.body.video_url.substring(req.body.video_url.lastIndexOf('/') + 1),
+				'path': id
+		 	}
+
+		 	console.log("download video");
+
+	 		processVideo(id, video, req, res);
+
+		}).on('error', function(e) {
+			error = 'Problema ao carregar video_url: ' + e.message;
+
+			res.send(500, parameters.errorMessage(error));
+		});
+
+	} else {
+		res.send(500, parameters.errorMessage('Video deve ser enviado como parâmetro "video" ou como "video_url"'));
 		return;
 	}
+};
 
+
+function processVideo(id, video, req, res) {
 	/* Cria uma pasta cujo o nome é o ID atual */
-	mkdirp('/home/libras/vlibras-api/uploads/' + id, function(error) {
+	mkdirp(properties.uploads_folder + id, function(error) {
 	
 		if (error) { console.log(error); res.send(500, parameters.errorMessage('Erro na criação da pasta com o ID: ' + id)); return; }
 
 		/* Move o vídeo submetido para a pasta com o seu ID correspondente */
-		fs.rename(req.files.video.path, '/home/libras/vlibras-api/uploads/' + id + '/' + req.files.video.name, function(error) {
+		fs.rename(video.path, properties.uploads_folder + id + '/' + video.name, function(error) {
 			if (error) { console.log(error); res.send(500, parameters.errorMessage('Erro ao mover o vídeo submetido')); return; }
 		});
 
 		/* Cria a linha de comando */
 		var command_line = 'vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.body.servico) + ' uploads/' + id + '/' +
-							req.files.video.name + ' 1 ' + parameters.getPosition(req.body.posicao) + ' ' + parameters.getSize(req.body.tamanho) + ' ' +
+							video.name + ' 1 ' + parameters.getPosition(req.body.posicao) + ' ' + parameters.getSize(req.body.tamanho) + ' ' +
 							parameters.getTransparency(req.body.transparencia) + ' ' + id + '> /tmp/core_log 2>&1';
 
 		console.log(command_line);
@@ -74,93 +114,30 @@ function init(req, res) {
 			child.on('close', function(code, signal){
 				if (code !== 0) {
 					var path = url.parse(req.body.callback);
-
 					var data = querystring.stringify( { 'error': 'Erro no Core', 'code': code } );
 
-					var options = {
-						host: path.hostname,
-						port: path.port,
-						path: path.path,
-						method: 'POST',
-					    headers: {
-					        'Content-Type': 'application/x-www-form-urlencoded',
-					        'Content-Length': Buffer.byteLength(data)
-					    }
-					};
-
-					var requesting = http.request(options, function(res) {
-					    res.setEncoding('utf8');
-					});
-
-					requesting.on('error', function (e) {
-				        console.log("The callback URL can not be reachable");
-				    });
-
-					requesting.write(data);
-					requesting.end();
+					requests.postRequest(path, data);
 
 					return;
 				}
 
 				var path = url.parse(req.body.callback);
-
 				var data = querystring.stringify({ 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.flv' });
 
-				var options = {
-					host: path.hostname,
-					port: path.port,
-					path: path.path,
-					method: 'POST',
-				    headers: {
-				        'Content-Type': 'application/x-www-form-urlencoded',
-				        'Content-Length': Buffer.byteLength(data)
-				    }
-				};
-
-				var requesting = http.request(options, function(res) {
-				    res.setEncoding('utf8');
-				});
-
-				requesting.on('error', function (e) {
-			        console.log("The callback URL can not be reachable");
-			    });
-
-				requesting.write(data);
-				requesting.end();
+				requests.postRequest(path, data);
 			});
 
 			/* Listener que dispara quando a requisição ao core da erro */
 			child.on('error', function(code, signal){
-				var path = url.parse(req.body.callback);
+					var path = url.parse(req.body.callback);
+					var data = querystring.stringify( { 'error': 'Erro na chamada ao core', 'code': code, 'id': id } );
 
-				var data = querystring.stringify( { 'error': 'Erro na chamada ao Core', 'code': code } );
-
-				var options = {
-					host: path.hostname,
-					port: path.port,
-					path: path.path,
-					method: 'POST',
-				    headers: {
-				        'Content-Type': 'application/x-www-form-urlencoded',
-				        'Content-Length': Buffer.byteLength(data)
-				    }
-				};
-
-				var requesting = http.request(options, function(res) {
-				    res.setEncoding('utf8');
-				});
-
-				requesting.on('error', function (e) {
-			        console.log("The callback URL can not be reachable");
-			    });
-
-				requesting.write(data);
-				requesting.end();
+					requests.postRequest(path, data);
 			});
 
-			res.send(200);
+			res.send(200, JSON.stringify({ 'id': id }));
 		}
 	});
-};
+}
 
 module.exports.init = init;

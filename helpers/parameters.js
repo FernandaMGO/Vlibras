@@ -143,7 +143,7 @@ function checkTransparency(transparency) {
 };
 
 function checkVideo(file) {
-    var accepted_file_types = ['flv', 'ts', 'avi', 'mp4', 'mov', 'webm', 'wmv', 'mkv',];
+    var accepted_file_types = ['flv', 'ts', 'avi', 'mp4', 'mov', 'webm', 'wmv', 'mkv'];
     return check_type(file, accepted_file_types)
 };
 

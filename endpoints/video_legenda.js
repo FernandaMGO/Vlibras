@@ -38,17 +38,17 @@ function init(req, res) {
 	}
 
 	/* Cria uma pasta cujo o nome é o ID atual */
-	mkdirp('/home/libras/vlibras-api/uploads/' + id, function(error) {
+	mkdirp(properties.uploads_folder + id, function(error) {
 	
 		if (error) { console.log(error); return; }
 
 		/* Move o vídeo submetido para a pasta com o seu ID correspondente */
-		fs.rename(req.files.video.path, '/home/libras/vlibras-api/uploads/' + id + '/' + req.files.video.name, function(error) {
+		fs.rename(req.files.video.path, properties.uploads_folder + id + '/' + req.files.video.name, function(error) {
 			if (error) { console.log(error); res.send(500, parameters.errorMessage('Erro ao mover o vídeo submetido')); return; }
 		});
 
 		/* Move a legenda submetido para a pasta com o seu ID correspondente */
-		fs.rename(req.files.legenda.path, '/home/libras/vlibras-api/uploads/' + id + '/' + req.files.legenda.name, function(error) {
+		fs.rename(req.files.legenda.path, properties.uploads_folder + id + '/' + req.files.legenda.name, function(error) {
 			if (error) { console.log(error); res.send(500, parameters.errorMessage('Erro ao mover a legenda submetido')); return; }
 		});
 
