@@ -1,5 +1,6 @@
 var parameters = require('../helpers/parameters');
 var properties = require('../helpers/properties');
+var requests = require('../helpers/requests');
 
 var exec = require('child_process').exec, child;
 var querystring = require('querystring');
@@ -56,7 +57,7 @@ function init(req, res) {
 		var command_line = 'vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.body.servico) + ' uploads/' + id + '/' +
 						req.files.video.name + ' uploads/' + id + '/' + req.files.legenda.name + ' ' + parameters.getLanguage(req.body.linguagem) +
 						' ' + parameters.getPosition(req.body.posicao) + ' ' + parameters.getSize(req.body.tamanho) + ' ' +
-						parameters.getTransparency(req.body.transparencia) + ' ' + id + '> /tmp/core_log 2>&1';
+						parameters.getTransparency(req.body.transparencia) + ' ' + id + ' > /tmp/core_log 2>&1';
 
 		console.log(command_line);
 
@@ -86,91 +87,28 @@ function init(req, res) {
 			child.on('close', function(code, signal){
 				if (code !== 0) {
 					var path = url.parse(req.body.callback);
-
 					var data = querystring.stringify( { 'error': 'Erro no Core', 'code': code } );
 
-					var options = {
-						host: path.hostname,
-						port: path.port,
-						path: path.path,
-						method: 'POST',
-					    headers: {
-					        'Content-Type': 'application/x-www-form-urlencoded',
-					        'Content-Length': Buffer.byteLength(data)
-					    }
-					};
-
-					var requesting = http.request(options, function(res) {
-					    res.setEncoding('utf8');
-					});
-
-					requesting.on('error', function (e) {
-				        console.log("The callback URL can not be reachable");
-				    });
-
-					requesting.write(data);
-					requesting.end();
+					requests.postRequest(path, data);
 
 					return;
 				}
 
 				var path = url.parse(req.body.callback);
-
 				var data = querystring.stringify({ 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.flv' });
 
-				var options = {
-					host: path.hostname,
-					port: path.port,
-					path: path.path,
-					method: 'POST',
-				    headers: {
-				        'Content-Type': 'application/x-www-form-urlencoded',
-				        'Content-Length': Buffer.byteLength(data)
-				    }
-				};
-
-				var requesting = http.request(options, function(res) {
-				    res.setEncoding('utf8');
-				});
-
-				requesting.on('error', function (e) {
-			        console.log("The callback URL can not be reachable");
-			    });
-
-				requesting.write(data);
-				requesting.end();
+				requests.postRequest(path, data);
 			});
 
 			/* Listener que dispara quando a requisição ao core da erro */
 			child.on('error', function(code, signal){
-				var path = url.parse(req.body.callback);
+					var path = url.parse(req.body.callback);
+					var data = querystring.stringify( { 'error': 'Erro na chamada ao core', 'code': code, 'id': id } );
 
-				var data = querystring.stringify( { 'error': 'Erro na chamada ao Core', 'code': code } );
-
-				var options = {
-					host: path.hostname,
-					port: path.port,
-					path: path.path,
-					method: 'POST',
-				    headers: {
-				        'Content-Type': 'application/x-www-form-urlencoded',
-				        'Content-Length': Buffer.byteLength(data)
-				    }
-				};
-
-				var requesting = http.request(options, function(res) {
-				    res.setEncoding('utf8');
-				});
-
-				requesting.on('error', function (e) {
-			        console.log("The callback URL can not be reachable");
-			    });
-
-				requesting.write(data);
-				requesting.end();
+					requests.postRequest(path, data);
 			});
 
-			res.send(200);
+			res.send(200, JSON.stringify({ 'id': id }));
 		}
 	});
 };
