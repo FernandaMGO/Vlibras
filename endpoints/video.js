@@ -42,16 +42,14 @@ function init(req, res) {
 
 	} else if (req.body.video_url !== undefined) {
 		http.get(req.body.video_url, function(response) {
-			console.log("video_url: downloading");
 
+			// Salva o arquivo em disco
 			response.pipe(fs.createWriteStream(id));
 
 			var video = {
 				'name': req.body.video_url.substring(req.body.video_url.lastIndexOf('/') + 1),
 				'path': id
 		 	}
-
-		 	console.log("download video");
 
 	 		processVideo(id, video, req, res);
 
