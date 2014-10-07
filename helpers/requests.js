@@ -13,7 +13,17 @@ function postRequest(path, data) {
 	};
 
 	var requesting = http.request(options, function(res) {
-	    res.setEncoding('utf8');
+		/* Debugging */
+		/*
+	    console.log('Callback response status: ' + res.statusCode);
+		console.log('Callback response headers: ' + JSON.stringify(res.headers));
+
+		res.setEncoding('utf8');
+
+		res.on('data', function (chunk) {
+			console.log('Callback response body: ' + chunk);
+		});
+		*/
 	});
 
 	requesting.on('error', function (e) {
