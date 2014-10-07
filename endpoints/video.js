@@ -26,8 +26,6 @@ function init(req, res) {
 		return;
 	}
 
-	var video;
-
 	/* Checa se o arquivo de vídeo submetivo possui uma extensão válida */
 	if (req.files.video !== undefined) {
 		if (parameters.checkVideo(req.files.video.name) === false) {
@@ -35,7 +33,7 @@ function init(req, res) {
 			return;	
 		}	
 
-		video = {
+		var video = {
 			'name': req.files.video.name,
 			'path': req.files.video.path
 		}
@@ -48,7 +46,7 @@ function init(req, res) {
 
 			response.pipe(fs.createWriteStream(id));
 
-			video = {
+			var video = {
 				'name': req.body.video_url.substring(req.body.video_url.lastIndexOf('/') + 1),
 				'path': id
 		 	}
@@ -84,7 +82,7 @@ function processVideo(id, video, req, res) {
 		/* Cria a linha de comando */
 		var command_line = 'vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.body.servico) + ' uploads/' + id + '/' +
 							video.name + ' 1 ' + parameters.getPosition(req.body.posicao) + ' ' + parameters.getSize(req.body.tamanho) + ' ' +
-							parameters.getTransparency(req.body.transparencia) + ' ' + id + '> /tmp/core_log 2>&1';
+							parameters.getTransparency(req.body.transparencia) + ' ' + id + ' > /tmp/core_log 2>&1';
 
 		console.log(command_line);
 
