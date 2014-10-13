@@ -14,20 +14,21 @@ function postRequest(path, data) {
 
 	var requesting = http.request(options, function(res) {
 		/* Debugging */
-		/*
-	    console.log('Callback response status: ' + res.statusCode);
-		console.log('Callback response headers: ' + JSON.stringify(res.headers));
+		
+		console.log('== Chamando callback: ' + path.hostname)
+	    console.log('=== Response status: ' + res.statusCode);
+		console.log('=== Response headers: ' + JSON.stringify(res.headers));
 
 		res.setEncoding('utf8');
 
 		res.on('data', function (chunk) {
-			console.log('Callback response body: ' + chunk);
+			console.log('=== Response body: ' + chunk);
 		});
-		*/
+		
 	});
 
 	requesting.on('error', function (e) {
-        console.log("The callback URL can not be reachable");
+        console.log("=== Não foi possível chamar a URL de callback");
     });
 
 	requesting.write(data);

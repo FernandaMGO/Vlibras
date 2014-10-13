@@ -172,7 +172,7 @@ function check_type(file, accepted_file_types) {
 };
 
 function errorMessage(message) {
-	return { 'error': message }
+	return JSON.stringify({ 'error': message })
 };
 
 module.exports.getServiceType = getServiceType;

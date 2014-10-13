@@ -7,8 +7,9 @@ var ep_video = require('./endpoints/video');
 var ep_legenda = require('./endpoints/legenda');
 var ep_video_legenda = require('./endpoints/video_legenda');
 
-var path = require('path');
 var express = require('express');
+var path = require('path');
+var util = require('util');
 var app = express();
 
 app.use(express.static(path.join(__dirname, '/videos')));
@@ -18,7 +19,11 @@ app.get('/', function(req, res){
 	res.send(200, { 'status': 'server is running!' } );
 });
 
-app.post('/api', function(req, res){
+app.post('/api', function(req, res) {
+	console.log("\n\n\n=============================================");
+	console.log("[" + new Date().toISOString() + "] Requisição do IP: " + req.ip);
+	console.log("== Parametros: " + util.inspect(req.body));
+
 	/* Verifica se o paramêtro [servico] possui algum valor */
 	if (req.body.servico !== '') {
 		/* Verifica qual é o Tipo de Serviço fornecido */ 
