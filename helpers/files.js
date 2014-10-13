@@ -1,5 +1,7 @@
-var fs = require('fs');
+var parameters = require('../helpers/parameters');
+
 var http = require('http');
+var fs = require('fs');
 
 /* 
 * Função que processa o vídeo (seja baixando, seja pegando o vídeo enviado)
