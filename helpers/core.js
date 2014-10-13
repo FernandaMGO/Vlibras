@@ -1,4 +1,5 @@
 var requests = require('../helpers/requests');
+var properties = require('../helpers/properties');
 
 var url = require('url');
 var http = require('http');
