@@ -99,7 +99,7 @@ function callCore(id, video, subtitle, req, res) {
 
 	/* Cria a linha de comando */
 	var command_line = 'vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.body.servico) + ' ' +
-					video.path + ' ' + subtitle.path + ' ' + parameters.getLanguage(req.body.linguagem) +
+					video.path.slice(2) + ' ' + subtitle.path.slice(2) + ' ' + parameters.getLanguage(req.body.linguagem) +
 					' ' + parameters.getPosition(req.body.posicao) + ' ' + parameters.getSize(req.body.tamanho) + ' ' +
 					parameters.getTransparency(req.body.transparencia) + ' ' + id + ' > /tmp/core_log 2>&1';
 
