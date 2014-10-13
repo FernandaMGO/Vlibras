@@ -93,8 +93,9 @@ function downloadAndMoveFiles(folder, req, locals, callback) {
 function callCore(id, video, subtitle, req, res) {
 
 	/* Cria a linha de comando */
+	/* slice(2) é para transformar ./path em path */
 	var command_line = 'vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.body.servico) + ' ' +
-					video.path + ' 1 ' + parameters.getPosition(req.body.posicao) + ' ' + parameters.getSize(req.body.tamanho) + ' ' +
+					video.path.slice(2) + ' 1 ' + parameters.getPosition(req.body.posicao) + ' ' + parameters.getSize(req.body.tamanho) + ' ' +
 					parameters.getTransparency(req.body.transparencia) + ' ' + id + ' > /tmp/core_log 2>&1';
 
 	console.log("=== Core: " + command_line);
