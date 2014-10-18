@@ -27,7 +27,7 @@ function call(id, command_line, req, res) {
 			}
 
 			// Se o core executou normal
-			res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.flv' });
+			res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.flv', 'id' : id });
 		});
 
 		// Se a chamada deu erro
@@ -47,9 +47,9 @@ function call(id, command_line, req, res) {
 
 			// Se o core executou com erro
 			if (code === 0) {
-				var data = querystring.stringify({ 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.mp4' });
+				var data = querystring.stringify({ 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.mp4', 'id' : id });
 			} else {
-				var data = querystring.stringify({ 'error': 'Erro no Core', 'code': code });
+				var data = querystring.stringify({ 'error': 'Erro no Core', 'code': code, 'id' : id });
 			}
 
 			// Chama o callback
