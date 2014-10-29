@@ -46,6 +46,12 @@ function downloadAndMoveVideo(folder, req, locals, callback) {
 
 			// Nome do arquivo
 			var filename = req.body.video_url.substring(req.body.video_url.lastIndexOf('/') + 1);
+
+			// Tira os parâmetros HTTP
+			if (filename.lastIndexOf("?") !== -1) {
+				filename = filename.substring(0, filename.lastIndexOf("?"));
+			}
+
 			var path = folder + '/' + filename;
 
 			// Salva o arquivo em disco
@@ -114,6 +120,12 @@ function downloadAndMoveSubtitle(folder, req, locals, callback) {
 
 			// Nome do arquivo
 			var filename = req.body.legenda_url.substring(req.body.legenda_url.lastIndexOf('/') + 1);
+
+			// Tira os parâmetros HTTP
+			if (filename.lastIndexOf("?") !== -1) {
+				filename = filename.substring(0, filename.lastIndexOf("?"));
+			}
+
 			var path = folder + '/' + filename;
 
 			// Salva o arquivo em disco
