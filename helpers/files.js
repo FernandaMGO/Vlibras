@@ -54,15 +54,27 @@ function downloadAndMoveVideo(folder, req, locals, callback) {
 
 			var path = folder + '/' + filename;
 
+			// Cria o stream para escrita
+			var file = fs.createWriteStream(path);
+
 			// Salva o arquivo em disco
-			response.pipe(fs.createWriteStream(path));
+			response.pipe(file);
 
-			// Retorna o vídeo baixado
-			locals.video = {
-				'path': path
-		 	}
+			// Quando a escrita acabar
+			file.on('finish', function() {
 
-		 	return callback();
+				// Fecha o arquivo
+				file.close(function() {
+
+					// Retorna o vídeo baixado
+					locals.video = {
+						'path': path
+				 	}
+				 	
+				 	// Chama o callback para prosseguir execução
+				 	callback();	
+				});
+			});
 
 	 	// Se deu erro na requisição de baixar o vídeo
 		}).on('error', function(e) {
@@ -128,15 +140,27 @@ function downloadAndMoveSubtitle(folder, req, locals, callback) {
 
 			var path = folder + '/' + filename;
 
+			// Cria o stream para escrita
+			var file = fs.createWriteStream(path);
+
 			// Salva o arquivo em disco
-			response.pipe(fs.createWriteStream(path));
+			response.pipe(file);
 
-			// Retorna o vídeo baixado
-			locals.subtitle = {
-				'path': path
-		 	}
+			// Quando a escrita acabar
+			file.on('finish', function() {
 
-		 	return callback();
+				// Fecha o arquivo
+				file.close(function() {
+
+					// Retorna o vídeo baixado
+					locals.subtitle = {
+						'path': path
+				 	}
+				 	
+				 	// Chama o callback para prosseguir execução
+				 	callback();	
+				});
+			});
 
 	 	// Se deu erro na requisição de baixar a legenda
 		}).on('error', function(e) {
