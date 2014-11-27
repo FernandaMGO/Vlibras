@@ -22,19 +22,19 @@ function init(req, res) {
 	}
 
 	/* Cria a linha de comando */
-	var command_line = 'echo ' + req.body.texto + ' >> ' + __dirname + '/text_files/' + id + ' && cd ../vlibras-core' +
-						' && ./vlibras ' + parameters.getServiceType(req.body.servico) + ' ../vlibras-api/text_files/' + 
-						id + ' ' + parameters.getTransparency(req.body.transparencia) + ' ' + id + ' IOS';
+	var command_line = 'echo ' + req.body.texto + ' >> text_files/' + id + ' && mkdir uploads/' + id + ' && vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.body.servico) + ' text_files/' + 
+						id + ' ' + parameters.getTransparency(req.body.transparencia) + ' ' + id + ' IOS > /tmp/core_log 2>&1';
+
+        console.log(command_line)
 
 	/* Executa a linha de comando */
 	child = exec(command_line, function(err, stdout, stderr) { 
 	 	// [stdout] = vlibras-core output
-	 	// console.log(stdout);
 	});
 
 	/* Listener que dispara quando a requisição ao core finaliza */
 	child.on('close', function(code, signal){
-		res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.avi' });
+		res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.mp4' });
 	});
 
 	/* Listener que dispara quando a requisição ao core da erro */
