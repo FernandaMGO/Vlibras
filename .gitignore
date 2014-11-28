@@ -3,6 +3,7 @@ node_modules
 text_files/*
 uploads/*
 videos/*
+!videos/plugin/
 vlibras_user
 npm-debug.log
 tmp/
