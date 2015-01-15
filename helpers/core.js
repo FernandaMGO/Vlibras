@@ -27,7 +27,7 @@ function call(id, command_line, req, res) {
 			}
 
 			// Se o core executou normal
-			res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.flv', 'id' : id });
+			res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.mp4'});
 		});
 
 		// Se a chamada deu erro

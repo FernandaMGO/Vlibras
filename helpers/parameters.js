@@ -1,5 +1,5 @@
 function getServiceType(service_type) {
-	switch(service_type) {		
+	switch(service_type) {	
 		case 'video-legenda':
 			return 2;
 		break;
@@ -19,6 +19,9 @@ function getServiceType(service_type) {
 		case 'legenda':
 			return 5;
 		break;
+		case 'audio':
+			return 6;
+		break;	
 	}
 };
 
@@ -152,6 +155,11 @@ function checkSubtitle(file) {
     return check_type(file, accepted_file_types)
 };
 
+function checkAudio(file) {
+    var accepted_file_types = ['mp3', 'wav'];
+    return check_type(file, accepted_file_types)
+};
+
 function check_type(file, accepted_file_types) {
 
   	var ext = file.substring(file.lastIndexOf('.') + 1).toLowerCase();
@@ -189,5 +197,6 @@ module.exports.checkTransparency = checkTransparency;
 
 module.exports.checkVideo = checkVideo;
 module.exports.checkSubtitle = checkSubtitle;
+module.exports.checkAudio = checkAudio;
 
 module.exports.errorMessage = errorMessage;

@@ -4,6 +4,7 @@ var properties = require('./helpers/properties');
 var ep_texto = require('./endpoints/texto');
 var ep_ios = require('./endpoints/ios');
 var ep_video = require('./endpoints/video');
+var ep_audio = require('./endpoints/audio');
 var ep_legenda = require('./endpoints/legenda');
 var ep_video_legenda = require('./endpoints/video_legenda');
 
@@ -41,6 +42,11 @@ app.post('/api', function(req, res) {
 			/* Tipo de Serviço: Só o Vídeo */
 			case 'video':
 				ep_video.init(req, res);
+			break;
+
+			/* Tipo de Serviço: Só o Áudio */
+			case 'audio':
+				ep_audio.init(req, res);
 			break;
 
 			/* Tipo de Serviço: Só a Legenda */

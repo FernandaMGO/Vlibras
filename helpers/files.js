@@ -175,5 +175,88 @@ function downloadAndMoveSubtitle(folder, req, locals, callback) {
 	}
 }
 
+function downloadAndMoveAudio(folder, req, locals, callback) {
+
+	// Se enviou o arquivo na requisição
+	if (req.files.audio !== undefined) {
+
+		// Se a validação falhar
+		if (parameters.checkAudio(req.files.audio.name) === false) {
+			var error = 'Áudio enviado com extensão inválida';
+			return callback(error);
+		}	
+
+		/* Move o áudio submetido para a pasta com o seu ID correspondente */
+		try {
+			fs.renameSync(req.files.audio.path, folder + '/' + req.files.audio.name);	
+		} catch (err) {
+			callback("Erro ao mover o áudio submetido: " + err);
+		}
+
+		// Se não, retorna o áudio enviado
+		locals.audio = {
+			'path': folder + '/' + req.files.audio.name
+		}
+
+		return callback();
+
+	// Se o arquivo não foi enviado, mas um audio_url foi
+	} else if (req.body.audio_url !== undefined) {
+
+		// Requisição para baixar o vídeo
+		http.get(req.body.audio_url, function(response) {
+
+			// Se o áudio não foi baixado com sucesso
+			if (response.statusCode !== 200) {
+				var error = 'Problema ao carregar audio_url: status ' + response.statusCode;
+				return callback(error);
+			}
+
+			// Nome do arquivo
+			var filename = req.body.audio_url.substring(req.body.audio_url.lastIndexOf('/') + 1);
+
+			// Tira os parâmetros HTTP
+			if (filename.lastIndexOf("?") !== -1) {
+				filename = filename.substring(0, filename.lastIndexOf("?"));
+			}
+
+			var path = folder + '/' + filename;
+
+			// Cria o stream para escrita
+			var file = fs.createWriteStream(path);
+
+			// Salva o arquivo em disco
+			response.pipe(file);
+
+			// Quando a escrita acabar
+			file.on('finish', function() {
+
+				// Fecha o arquivo
+				file.close(function() {
+
+					// Retorna o áudio baixado
+					locals.audio = {
+						'path': path
+				 	}
+				 	
+				 	// Chama o callback para prosseguir execução
+				 	callback();	
+				});
+			});
+
+	 	// Se deu erro na requisição de baixar o áudio
+		}).on('error', function(e) {
+			var error = 'Problema ao carregar audio_url: ' + e.message;
+			return callback(error);
+		});
+
+	// Se nem o áudio foi enviado e nem o audio_url foi preenchido
+	} else {
+		var error = "Áudio deve ser enviado como parâmetro 'audio' ou como 'audio_url'";
+		return callback(error);
+	}
+}
+
 module.exports.downloadAndMoveVideo = downloadAndMoveVideo;
 module.exports.downloadAndMoveSubtitle = downloadAndMoveSubtitle;
+module.exports.downloadAndMoveAudio = downloadAndMoveAudio;
