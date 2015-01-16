@@ -156,7 +156,7 @@ function checkSubtitle(file) {
 };
 
 function checkAudio(file) {
-    var accepted_file_types = ['mp3', 'wav'];
+    var accepted_file_types = ['mp3', 'wav', 'aac', 'flac', 'ogg', 'wma'];
     return check_type(file, accepted_file_types)
 };
 
