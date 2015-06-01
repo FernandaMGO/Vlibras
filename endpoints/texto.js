@@ -1,9 +1,12 @@
 var parameters = require('../helpers/parameters');
 var properties = require('../helpers/properties');
+var queue_helper = require('../helpers/queue');
 var db = require('../db/api');
 var exec = require('child_process').exec, child;
 var uuid = require('node-uuid');
 var fs = require('fs');
+var kue = require('kue'),
+    queue = kue.createQueue();
 
 function init(req, res, Request) {
 
@@ -38,29 +41,56 @@ function init(req, res, Request) {
 	});
 
 	/* Cria a linha de comando */
-	var command_line = 'echo ' + req.body.texto + ' >> text_files/' + id + ' && mkdir uploads/' + id + ' && vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.body.servico) + ' text_files/' + 
+	var command_line = 'echo ' + req.body.texto + ' >> text_files/' + id + ' && mkdir uploads/' + id + ' && vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.body.servico) + ' text_files/' +
 						id + ' ' + parameters.getTransparency(req.body.transparencia) + ' ' + id + ' WEB > /tmp/core_log 2>&1';
 
-        console.log(command_line)
+console.log(command_line);
+
+	var job = queue.create('exec_command_line', {
+	    title: 'Command Line for: ' + req.body.servico,
+	    command_line: command_line
+	}).save();
+
 
 	/* Executa a linha de comando */
-	child = exec(command_line, function(err, stdout, stderr) { 
-	 	// [stdout] = vlibras-core output
+	// child = exec(command_line, function(err, stdout, stderr) {
+	//  	// [stdout] = vlibras-core output
+	// });
+
+
+	// vai remover isso em cima e colocar isso aqui
+	queue.process('exec_command_line', function(job, done){
+		queue_helper.exec_command_line(job.data.command_line, done);
 	});
+
+	job.on('complete', function(){
+	    console.log("Job complete");
+  		db.update(request_object, 'Completed', function(result) {
+			});
+
+	}).on('failed', function(){
+	    console.log("Job failed");
+			res.send(500, parameters.errorMessage('Erro na chamada ao core'));
+			db.update(request_object, 'Error', function(result) {
+			});
+	}).on('progress', function(progress){
+	    process.stdout.write('\r  job #' + job.id + ' ' + progress + '% complete');
+	});
+
 
 	/* Listener que dispara quando a requisição ao core finaliza */
-	child.on('close', function(code, signal){
-//		res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.webm' });
-		db.update(request_object, 'Completed', function(result) {
-		});
-	});
-
-	/* Listener que dispara quando a requisição ao core da erro */
-	child.on('error', function(code, signal){
-		res.send(500, parameters.errorMessage('Erro na chamada ao core'));
-		db.update(request_object, 'Error', function(result) {
-		});
-	});
-};
+// 	child.on('close', function(code, signal){
+// //		res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.webm' });
+// 		db.update(request_object, 'Completed', function(result) {
+// 		});
+// 	});
+//
+// 	/* Listener que dispara quando a requisição ao core da erro */
+// 	child.on('error', function(code, signal){
+// 		res.send(500, parameters.errorMessage('Erro na chamada ao core'));
+// 		db.update(request_object, 'Error', function(result) {
+// 		});
+// 	});
+}
 
 module.exports.init = init;
