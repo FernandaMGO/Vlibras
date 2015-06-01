@@ -7,3 +7,4 @@ videos/*
 vlibras_user
 npm-debug.log
 tmp/
+*.rdb
