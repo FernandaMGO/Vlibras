@@ -16,6 +16,7 @@
     "node-uuid": "^1.4.1",
     "ip": "latest",
     "mongoose": "^3.8.16",
-    "python-shell": "0.0.3"
+    "python-shell": "0.0.3",
+    "kue": "latest"
   }
 }
