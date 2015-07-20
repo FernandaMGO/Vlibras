@@ -1,0 +1,26 @@
+{
+    "service-type": "3", 
+    "check-interval": "1", 
+    "identification": [
+        {
+            "IP": "127.0.1.1", 
+            "hostname": "cielly-FCG", 
+            "maintainer": "Equipe Cloud", 
+            "description": "Machine for testes purposes only.", 
+            "id": "123456"
+        }
+    ], 
+    "load-balance": "150.165.205.85", 
+    "path": [
+        {
+            "service-log": "/home/user/.vlibras-config/logs/service", 
+            "statistics-log": "/home/user/.vlibras-config/logs/statistics", 
+            "error-log": "/home/user/.vlibras-config/logs/error", 
+            "capacity-log": "/home/user/.vlibras-config/logs/capacity"
+        }
+    ], 
+    "exclusivity": "0", 
+    "report-interval": "5", 
+    "storage": "150.165.205.69", 
+    "qd-server-addr": "150.165.204.23"
+}

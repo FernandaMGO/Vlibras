@@ -15,6 +15,7 @@ var util = require('util');
 var app = express();
 var Request = require('./db/schemas/request').init(mongoose);
 var db = require('./db/api');
+var config = require('./config/main.js');
 
 app.use(express.static(path.join(__dirname, '/videos')));
 app.use(express.bodyParser({ keepExtensions: true, uploadDir: path.join(__dirname, '/uploads') }));
@@ -31,7 +32,7 @@ app.post('/api', function(req, res) {
 
 	/* Verifica se o paramêtro [servico] possui algum valor */
 	if (req.body.servico !== '') {
-		/* Verifica qual é o Tipo de Serviço fornecido */ 
+		/* Verifica qual é o Tipo de Serviço fornecido */
 		switch(req.body.servico) {
 			/* Tipo de Serviço: Texto */
 			case 'texto':
