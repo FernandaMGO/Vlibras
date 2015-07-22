@@ -33,12 +33,43 @@ exports.getLogByName = function (name) {
 exports.getServiceLogPath = function () {
   return this.getLogByName('service');
 };
+
 exports.getStatisticsLogPath = function () {
   return this.getLogByName('statistics');
 };
+
 exports.getErrorLogPath = function () {
   return this.getLogByName('error');
 };
+
 exports.getCapacityLogPath = function () {
   return this.getLogByName('capacity');
+};
+
+exports.canRunOnBox = function (service) {
+  //1 para bloqueante, 2 para nao bloqueante e 3 pra aceitar os dois
+  var serviceType = parseInt(this.getServiceType());
+
+  switch(service) {
+    case 'texto':
+      return serviceType == 1 || serviceType == 3;
+
+    case 'ios':
+      return true;
+
+    case 'video':
+      return serviceType == 2 || serviceType == 3;
+
+    case 'legenda':
+      return serviceType == 1 || serviceType == 3;
+
+    case 'video-legenda':
+      return serviceType == 2 || serviceType == 3;
+
+    case 'videornp':
+      return serviceType == 2 || serviceType == 3;
+
+    default:
+      return false;
+  }
 };

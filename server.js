@@ -33,37 +33,39 @@ app.post('/api', function(req, res) {
 	/* Verifica se o paramêtro [servico] possui algum valor */
 	if (req.body.servico !== '') {
 		/* Verifica qual é o Tipo de Serviço fornecido */
-		switch(req.body.servico) {
-			/* Tipo de Serviço: Texto */
-			case 'texto':
-				ep_texto.init(req, res, Request);
-			break;
+		if (config.canRunOnBox(req.body.servico)) {
+			switch(req.body.servico) {
+				/* Tipo de Serviço: Texto */
+				case 'texto':
+					ep_texto.init(req, res, Request);
+				break;
 
-			/* Tipo de Serviço: iOS */
-			case 'ios':
-				ep_ios.init(req, res);
-			break;
+				/* Tipo de Serviço: iOS */
+				case 'ios':
+					ep_ios.init(req, res);
+				break;
 
-			/* Tipo de Serviço: Só o Vídeo */
-			case 'video':
-				ep_video.init(req, res);
-			break;
+				/* Tipo de Serviço: Só o Vídeo */
+				case 'video':
+					ep_video.init(req, res);
+				break;
 
-			/* Tipo de Serviço: Só a Legenda */
-			case 'legenda':
-				ep_legenda.init(req, res);
-			break;
+				/* Tipo de Serviço: Só a Legenda */
+				case 'legenda':
+					ep_legenda.init(req, res);
+				break;
 
-			/* Tipo de Serviço: Video + Legenda */
-			case 'video-legenda':
-				ep_video_legenda.init(req, res);
-			break;
+				/* Tipo de Serviço: Video + Legenda */
+				case 'video-legenda':
+					ep_video_legenda.init(req, res);
+				break;
 
-			/* Case para um Tipo de Serviço inválido */
-			default:
-				res.send(500, parameters.errorMessage('Tipo do serviço inválido'));
-			break;
-		}
+				/* Case para um Tipo de Serviço inválido */
+				default:
+					res.send(500, parameters.errorMessage('Tipo do serviço inválido'));
+				break;
+			} // end of switch
+		} // end of if canRunOnBox
 	} else {
 		res.send(500, parameters.errorMessage('Especifique o tipo do serviço'));
 	}
