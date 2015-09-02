@@ -9,7 +9,7 @@ function init_schema(mongoose) {
 		user: String,
 		subtitle: String,
 		manualrevision: String,
-		reasonofrevision: String,
+		
 		dictionary: String,
 	  	created_at: { type: Date },
 	  	updated_at: { type: Date }

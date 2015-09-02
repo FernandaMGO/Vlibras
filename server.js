@@ -52,6 +52,10 @@ app.post('/api', function(req, res) {
 					ep_video.init(req, res);
 				break;
 
+				case 'videornp':
+					ep_video_rnp.init(req, res, Request);
+				break;			
+
 				/* Tipo de Serviço: Só a Legenda */
 				case 'legenda':
 					ep_legenda.init(req, res);
@@ -73,7 +77,7 @@ app.post('/api', function(req, res) {
 	}
 });
 
-app.get('/api/requests', function(req, res) {
+app.get('/requests', function(req, res) {
 	db.read_all(Request, function(result) {
 		if (result !== null) {
 			res.send(200, result);
@@ -83,13 +87,37 @@ app.get('/api/requests', function(req, res) {
 	});
 });
 
-app.post('/glosa', function(req, res) {
-//	options.args = JSON.stringify(req.body);
-	PythonShell.run('vlibras_user/vlibras-translate/PortGlosa.py', req.body.texto, function (err, results) {
-  		if (err) { console.log(err); res.send(400); return; }
-        // results is an array consisting of messages collected during execution
-		res.send(results);
+
+app.get('/api/requests/', function(req,res) {
+        db.findByIds(Request, req.param("id"), function(result) {
+                console.log(result);
+                if (result !== null) {
+                        res.send(200, result);
+                } else {
+                        res.send(500, { 'error': 'Erro na busca.'});
+                }
+        });
+});
+
+
+app.get('/api/requests/:id', function(req, res) {
+	db.findById(Request, req.param.id, function(result) {
+		if (result !== null) {
+			res.send(200, result);
+		} else {
+			res.send(500, { 'error': 'Erro na busca.'});
+		}
 	});
+});
+
+app.get('/glosa', function(req, res) {
+        res.header("Access-Control-Allow-Origin", "*");
+        options.args = req.param("texto");
+        console.log(options.args);
+        PythonShell.run('PortGlosa.py', options, function (err, results) {
+                if (err) { console.log(err); res.send(400); return;}
+                res.send(200,results[0]);
+        });
 });
 
 app.get('/limparfila', function(req, res) {
