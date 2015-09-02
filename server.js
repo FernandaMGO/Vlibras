@@ -16,6 +16,8 @@ var app = express();
 var Request = require('./db/schemas/request').init(mongoose);
 var db = require('./db/api');
 var config = require('./config/main.js');
+var kue = require('kue');
+var queue = kue.createQueue();
 
 app.use(express.static(path.join(__dirname, '/videos')));
 app.use(express.bodyParser({ keepExtensions: true, uploadDir: path.join(__dirname, '/uploads') }));
@@ -88,6 +90,60 @@ app.post('/glosa', function(req, res) {
         // results is an array consisting of messages collected during execution
 		res.send(results);
 	});
+});
+
+app.get('/limparfila', function(req, res) {
+
+	// graceful shutdown
+	process.once( 'SIGTERM', function ( sig ) {
+	  queue.shutdown( 5000, function(err) {
+	    console.log( 'Kue shutdown: ', err||'' );
+	    process.exit( 0 );
+	  });
+	});
+
+	// todos abaixos sao redundantes
+	queue.inactive( function( err, ids ) {
+	  ids.forEach( function( id ) {
+	    kue.Job.get( id, function( err, job ) {
+				job.remove( function(){
+		      // console.log( 'removed ', job.id );
+		    });
+	    });
+	  });
+	});
+
+	queue.active( function( err, ids ) {
+	  ids.forEach( function( id ) {
+	    kue.Job.get( id, function( err, job ) {
+				job.remove( function(){
+		      // console.log( 'removed ', job.id );
+		    });
+	    });
+	  });
+	});
+
+	queue.complete( function( err, ids ) {
+	  ids.forEach( function( id ) {
+	    kue.Job.get( id, function( err, job ) {
+				job.remove( function(){
+		      // console.log( 'removed ', job.id );
+		    });
+	    });
+	  });
+	});
+
+	queue.failed( function( err, ids ) {
+	  ids.forEach( function( id ) {
+	    kue.Job.get( id, function( err, job ) {
+				job.remove( function(){
+		      // console.log( 'removed ', job.id );
+		    });
+	    });
+	  });
+	});
+
+	res.send(200, "Fila limpa");
 });
 
 app.listen(properties.port, properties.host, function(){
