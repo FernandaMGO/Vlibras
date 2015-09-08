@@ -7,6 +7,7 @@ var querystring = require('querystring');
 var exec = require('child_process').exec, child;
 var kue = require('kue'),
     queue = kue.createQueue();
+var logger = require('../logsystem/main.js');
 
 function call(id, command_line, req, res) {
 	/* Executa a linha de comando */
@@ -66,6 +67,7 @@ function call(id, command_line, req, res) {
 		      var data = querystring.stringify({ 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.mp4', 'id' : id });
 		    } else {
 		      var data = querystring.stringify({ 'error': 'Erro no Core', 'code': code, 'id' : id });
+          logger.incrementError("2");
 		    }
 
 		    // Chama o callback
@@ -76,7 +78,7 @@ function call(id, command_line, req, res) {
 		  child.on('error', function(code, signal) {
 		      var path = url.parse(req.body.callback);
 		      var data = querystring.stringify( { 'error': 'Erro na chamada ao core', 'code': code, 'id': id } );
-
+          logger.incrementError("2");
 		      requests.postRequest(path, data);
 		  });
 

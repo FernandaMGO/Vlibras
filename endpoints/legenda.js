@@ -6,6 +6,7 @@ var uuid = require('node-uuid');
 var fs = require('fs');
 var kue = require('kue'),
     queue = kue.createQueue();
+var logger = require('../logsystem/main.js');
 
 function init(req, res) {
 
@@ -57,20 +58,22 @@ function init(req, res) {
 		queue.process('exec_command_line', function(job, done){
 			child = queue_helper.exec_command_line(job.data.command_line, done);
 		});
-		
+
 		job.on('complete', function() {
 			/* Listener que dispara quando a requisição ao core finaliza */
 			child.on('close', function(code, signal){
 				res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.flv' });
+        logger.incrementService("outros", "traducoes");
 			});
 
 			/* Listener que dispara quando a requisição ao core da erro */
 			child.on('error', function(code, signal){
 				res.send(500, parameters.errorMessage('Erro na chamada ao core'));
+        logger.incrementError("1", err);
 			});
-		})
+		});
 
 	});
-};
+}
 
 module.exports.init = init;

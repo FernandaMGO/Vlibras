@@ -16,6 +16,7 @@ var app = express();
 var Request = require('./db/schemas/request').init(mongoose);
 var db = require('./db/api');
 var config = require('./config/main.js');
+var logger = require('./logsystem/main.js');
 var kue = require('kue');
 var queue = kue.createQueue();
 
@@ -39,26 +40,33 @@ app.post('/api', function(req, res) {
 			switch(req.body.servico) {
 				/* Tipo de Serviço: Texto */
 				case 'texto':
+					logger.incrementService("outros", "requisicoes");
 					ep_texto.init(req, res, Request);
 				break;
 
 				/* Tipo de Serviço: iOS */
 				case 'ios':
+					logger.incrementService("outros", "requisicoes");
 					ep_ios.init(req, res);
 				break;
 
 				/* Tipo de Serviço: Só o Vídeo */
 				case 'video':
+					logger.incrementService("videos", "requisicoes");
 					ep_video.init(req, res);
+					// logger.incrementService("videos", "traducoes");
 				break;
 
 				/* Tipo de Serviço: Só a Legenda */
 				case 'legenda':
+					logger.incrementService("outros", "requisicoes");
 					ep_legenda.init(req, res);
+
 				break;
 
 				/* Tipo de Serviço: Video + Legenda */
 				case 'video-legenda':
+					logger.incrementService("outros", "requisicoes");
 					ep_video_legenda.init(req, res);
 				break;
 
@@ -90,6 +98,12 @@ app.post('/glosa', function(req, res) {
         // results is an array consisting of messages collected during execution
 		res.send(results);
 	});
+});
+
+app.get('/incrementaerro', function(req, res) {
+	logger.incrementError("1", "detalhe do erro");
+	// logger.incrementService("videos", "traducoes");
+	res.send(200, "Incrementado");
 });
 
 app.get('/limparfila', function(req, res) {

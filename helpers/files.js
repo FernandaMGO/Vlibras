@@ -1,9 +1,9 @@
 var parameters = require('../helpers/parameters');
-
 var http = require('http');
 var fs = require('fs');
+var logger = require('../logsystem/main.js');
 
-/* 
+/*
 * Função que processa o vídeo (seja baixando, seja pegando o vídeo enviado)
 * Deve retornar um objeto contendo o nome e o caminho
 */
@@ -15,12 +15,13 @@ function downloadAndMoveVideo(folder, req, locals, callback) {
 		// Se a validação falhar
 		if (parameters.checkVideo(req.files.video.name) === false) {
 			var error = 'Vídeo enviado com extensão inválida';
+			logger.incrementError("2");
 			return callback(error);
-		}	
+		}
 
 		/* Move o vídeo submetido para a pasta com o seu ID correspondente */
 		try {
-			fs.renameSync(req.files.video.path, folder + '/' + req.files.video.name);	
+			fs.renameSync(req.files.video.path, folder + '/' + req.files.video.name);
 		} catch (err) {
 			callback("Erro ao mover o vídeo submetido: " + err);
 		}
@@ -70,9 +71,9 @@ function downloadAndMoveVideo(folder, req, locals, callback) {
 					locals.video = {
 						'path': path
 				 	}
-				 	
+
 				 	// Chama o callback para prosseguir execução
-				 	callback();	
+				 	callback();
 				});
 			});
 
@@ -89,7 +90,7 @@ function downloadAndMoveVideo(folder, req, locals, callback) {
 	}
 }
 
-/* 
+/*
 * Função que processa a legenda (seja baixando, seja pegando o vídeo enviado)
 * Deve retornar um objeto contendo o nome e o caminho
 */
@@ -101,12 +102,13 @@ function downloadAndMoveSubtitle(folder, req, locals, callback) {
 		// Se a validação falhar
 		if (parameters.checkSubtitle(req.files.legenda.name) === false) {
 			var error = 'Legenda enviado com extensão inválida';
+			logger.incrementError("3");
 			return callback(error);
-		}	
+		}
 
 		/* Move o vídeo submetido para a pasta com o seu ID correspondente */
 		try {
-			fs.renameSync(req.files.legenda.path, folder + '/' + req.files.legenda.name);	
+			fs.renameSync(req.files.legenda.path, folder + '/' + req.files.legenda.name);
 		} catch (err) {
 			callback("Erro ao mover a legenda submetida: " + err);
 		}
@@ -156,9 +158,9 @@ function downloadAndMoveSubtitle(folder, req, locals, callback) {
 					locals.subtitle = {
 						'path': path
 				 	}
-				 	
+
 				 	// Chama o callback para prosseguir execução
-				 	callback();	
+				 	callback();
 				});
 			});
 
@@ -184,11 +186,11 @@ function downloadAndMoveAudio(folder, req, locals, callback) {
 		if (parameters.checkAudio(req.files.audio.name) === false) {
 			var error = 'Áudio enviado com extensão inválida';
 			return callback(error);
-		}	
+		}
 
 		/* Move o áudio submetido para a pasta com o seu ID correspondente */
 		try {
-			fs.renameSync(req.files.audio.path, folder + '/' + req.files.audio.name);	
+			fs.renameSync(req.files.audio.path, folder + '/' + req.files.audio.name);
 		} catch (err) {
 			callback("Erro ao mover o áudio submetido: " + err);
 		}
@@ -238,9 +240,9 @@ function downloadAndMoveAudio(folder, req, locals, callback) {
 					locals.audio = {
 						'path': path
 				 	}
-				 	
+
 				 	// Chama o callback para prosseguir execução
-				 	callback();	
+				 	callback();
 				});
 			});
 
