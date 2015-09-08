@@ -1,0 +1,23 @@
+{
+    "resumo": {
+        "bloqueante": {
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0
+        },
+        "nao-bloqueante": {
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0
+        }
+    },
+    "detalhado": {
+        "1": "detalhe",
+        "2": "detalhe",
+        "3": "detalhe",
+        "4": "detalhe"
+
+    }
+}

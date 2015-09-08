@@ -1,0 +1,14 @@
+{
+    "tipo": {
+        "videos": {
+            "requisicoes": 0,
+            "traducoes": 0,
+            "saude": 0
+        },
+        "outros": {
+            "requisicoes": 3,
+            "traducoes": 3,
+            "saude": 0
+        }
+    }
+}
