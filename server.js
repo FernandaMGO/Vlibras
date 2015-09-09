@@ -100,8 +100,9 @@ app.post('/glosa', function(req, res) {
 	});
 });
 
+// para testes apenas
 app.get('/incrementaerro', function(req, res) {
-	logger.incrementError("1", "detalhe do erro");
+	// logger.incrementError("1", "detalhe do erro");
 	// logger.incrementService("videos", "traducoes");
 	res.send(200, "Incrementado");
 });
@@ -158,6 +159,12 @@ app.get('/limparfila', function(req, res) {
 	});
 
 	res.send(200, "Fila limpa");
+});
+
+// precisa ficar no final caso o request n bata com nenhuma rota anterior
+app.get('/*', function(req, res){
+	logger.incrementError("4", "Rota nao encontrada");
+	res.send(404, { 'status': 'Rota nao encontrada' } );
 });
 
 app.listen(properties.port, properties.host, function(){
