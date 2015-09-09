@@ -19,6 +19,7 @@ var config = require('./config/main.js');
 var logger = require('./logsystem/main.js');
 var kue = require('kue');
 var queue = kue.createQueue();
+var unirest = require('unirest');
 
 app.use(express.static(path.join(__dirname, '/videos')));
 app.use(express.bodyParser({ keepExtensions: true, uploadDir: path.join(__dirname, '/uploads') }));
@@ -170,3 +171,21 @@ app.get('/*', function(req, res){
 app.listen(properties.port, properties.host, function(){
 	console.log('Server running on ' + properties.host + ':' + properties.port);
 });
+
+
+
+var CronJob = require('cron').CronJob;
+// '* * * * * *' == a cada 1 segundo
+new CronJob('* * * * * *', function() {
+	unirest.post('http://localhost:5000/api')
+	.header('Accept', 'application/json')
+	.send({ "servico": "texto", "transparencia": "opaco", "texto": "texto teste" })
+	.end(function (response) {
+	  console.log(response.status);
+		if(response.status === 200){
+			logger.updateHealth("outros", 1);
+		} else {
+			logger.updateHealth();
+		}
+	});
+}, null, true); // no lugar do null pode ser uma funcao pra executar quando parar

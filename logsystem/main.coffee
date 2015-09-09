@@ -50,3 +50,15 @@ exports.incrementService = (serviceType, type, inc=1) ->
 
 
   writeLog(services, services_log_path)
+
+exports.updateHealth = (serviceType="outros", value=0) ->
+  services_log_path = "./logsystem/services.log"
+  services = JSON.parse(fs.readFileSync(services_log_path, 'utf8'))
+
+  # if e else if pra excluir valores diferente desses dois
+  if serviceType == "videos"
+    services["tipo"]["videos"]["saude"] = value
+  else if serviceType == "outros"
+    services["tipo"]["outros"]["saude"] = value
+
+  writeLog(services, services_log_path)

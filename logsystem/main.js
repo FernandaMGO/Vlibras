@@ -50,4 +50,22 @@
     return writeLog(services, services_log_path);
   };
 
+  exports.updateHealth = function(serviceType, value) {
+    var services, services_log_path;
+    if (serviceType == null) {
+      serviceType = "outros";
+    }
+    if (value == null) {
+      value = 0;
+    }
+    services_log_path = "./logsystem/services.log";
+    services = JSON.parse(fs.readFileSync(services_log_path, 'utf8'));
+    if (serviceType === "videos") {
+      services["tipo"]["videos"]["saude"] = value;
+    } else if (serviceType === "outros") {
+      services["tipo"]["outros"]["saude"] = value;
+    }
+    return writeLog(services, services_log_path);
+  };
+
 }).call(this);

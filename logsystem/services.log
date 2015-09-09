@@ -6,9 +6,9 @@
             "saude": 0
         },
         "outros": {
-            "requisicoes": 4,
-            "traducoes": 4,
-            "saude": 0
+            "requisicoes": 88,
+            "traducoes": 88,
+            "saude": 1
         }
     }
 }
