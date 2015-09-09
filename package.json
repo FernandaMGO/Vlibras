@@ -17,6 +17,8 @@
     "ip": "latest",
     "mongoose": "^3.8.16",
     "python-shell": "0.0.3",
-    "kue": "latest"
+    "kue": "latest",
+    "unirest": "latest",
+    "cron": "latest"
   }
 }

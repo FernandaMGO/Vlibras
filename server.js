@@ -16,8 +16,10 @@ var app = express();
 var Request = require('./db/schemas/request').init(mongoose);
 var db = require('./db/api');
 var config = require('./config/main.js');
+var logger = require('./logsystem/main.js');
 var kue = require('kue');
 var queue = kue.createQueue();
+var unirest = require('unirest');
 
 app.use(express.static(path.join(__dirname, '/videos')));
 app.use(express.bodyParser({ keepExtensions: true, uploadDir: path.join(__dirname, '/uploads') }));
@@ -39,30 +41,37 @@ app.post('/api', function(req, res) {
 			switch(req.body.servico) {
 				/* Tipo de Serviço: Texto */
 				case 'texto':
+					logger.incrementService("outros", "requisicoes");
 					ep_texto.init(req, res, Request);
 				break;
 
 				/* Tipo de Serviço: iOS */
 				case 'ios':
+					logger.incrementService("outros", "requisicoes");
 					ep_ios.init(req, res);
 				break;
 
 				/* Tipo de Serviço: Só o Vídeo */
 				case 'video':
+					logger.incrementService("videos", "requisicoes");
 					ep_video.init(req, res);
+					// logger.incrementService("videos", "traducoes");
 				break;
 
 				case 'videornp':
 					ep_video_rnp.init(req, res, Request);
-				break;			
+				break;
 
 				/* Tipo de Serviço: Só a Legenda */
 				case 'legenda':
+					logger.incrementService("outros", "requisicoes");
 					ep_legenda.init(req, res);
+
 				break;
 
 				/* Tipo de Serviço: Video + Legenda */
 				case 'video-legenda':
+					logger.incrementService("outros", "requisicoes");
 					ep_video_legenda.init(req, res);
 				break;
 
@@ -120,6 +129,14 @@ app.get('/glosa', function(req, res) {
         });
 });
 
+// para testes apenas
+app.get('/incrementaerro', function(req, res) {
+	// logger.incrementError("1", "detalhe do erro");
+	// logger.incrementService("videos", "traducoes");
+	res.send(200, "Incrementado");
+
+});
+
 app.get('/limparfila', function(req, res) {
 
 	// graceful shutdown
@@ -174,6 +191,30 @@ app.get('/limparfila', function(req, res) {
 	res.send(200, "Fila limpa");
 });
 
+// precisa ficar no final caso o request n bata com nenhuma rota anterior
+app.get('/*', function(req, res){
+	logger.incrementError("4", "Rota nao encontrada");
+	res.send(404, { 'status': 'Rota nao encontrada' } );
+});
+
 app.listen(properties.port, properties.host, function(){
 	console.log('Server running on ' + properties.host + ':' + properties.port);
 });
+
+
+
+var CronJob = require('cron').CronJob;
+// '* * * * * *' == a cada 1 segundo
+new CronJob('* * * * * *', function() {
+	unirest.post('http://localhost:5000/api')
+	.header('Accept', 'application/json')
+	.send({ "servico": "texto", "transparencia": "opaco", "texto": "texto teste" })
+	.end(function (response) {
+	  console.log(response.status);
+		if(response.status === 200){
+			logger.updateHealth("outros", 1);
+		} else {
+			logger.updateHealth();
+		}
+	});
+}, null, true); // no lugar do null pode ser uma funcao pra executar quando parar

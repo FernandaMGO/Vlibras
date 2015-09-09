@@ -6,6 +6,7 @@ var core = require('../helpers/core');
 var uuid = require('node-uuid');
 var mkdirp = require('mkdirp');
 var async = require('async');
+var logger = require('../logsystem/main.js');
 
 function init(req, res) {
 	res.set("Content-Type", "application/json");
@@ -23,7 +24,7 @@ function init(req, res) {
 	}
 
 	process(req, res);
-};
+}
 
 function process(req, res) {
 	var id = uuid.v4();
@@ -59,8 +60,10 @@ function process(req, res) {
 			try {
 				callCore(id, locals.video, locals.subtitle, req, res);
 				callback();
+				logger.incrementService("outros", "traducoes");
 			} catch (err) {
 				callback(err);
+				logger.incrementError("1", err);
 			}
 		}
 	], function(err) {

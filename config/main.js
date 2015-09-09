@@ -46,6 +46,21 @@ exports.getCapacityLogPath = function () {
   return this.getLogByName('capacity');
 };
 
+exports.isBloqueante = function () {
+  //1 para bloqueante, 2 para nao bloqueante e 3 pra aceitar os dois
+  return this.getServiceType() === 1;
+};
+
+exports.isNaoBloqueante = function () {
+  //1 para bloqueante, 2 para nao bloqueante e 3 pra aceitar os dois
+  return this.getServiceType() === 2;
+};
+
+exports.isAmbos = function () {
+  //1 para bloqueante, 2 para nao bloqueante e 3 pra aceitar os dois
+  return this.getServiceType() === 3;
+};
+
 exports.canRunOnBox = function (service) {
   //1 para bloqueante, 2 para nao bloqueante e 3 pra aceitar os dois
   var serviceType = parseInt(this.getServiceType());

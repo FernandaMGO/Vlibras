@@ -6,6 +6,7 @@ var core = require('../helpers/core');
 var uuid = require('node-uuid');
 var mkdirp = require('mkdirp');
 var async = require('async');
+var logger = require('../logsystem/main.js');
 
 function init(req, res) {
 	res.set("Content-Type", "application/json");
@@ -21,7 +22,7 @@ function init(req, res) {
 		res.send(500, parameters.errorMessage('Parâmetros insuficientes ou inválidos'));
 		return;
 	}
-		
+
 	process(req, res);
 };
 
@@ -29,7 +30,7 @@ function process(req, res) {
 	var id = uuid.v4();
 	var folder = properties.uploads_folder + id;
 	var locals = {};
-	
+
 	async.series([
 		// Cria a pasta apropriada
 		function(callback) {
@@ -59,7 +60,9 @@ function process(req, res) {
 			try {
 				callCore(id, locals.audio, req, res);
 				callback();
+				logger.incrementService("outros", "traducoes");
 			} catch (err) {
+				logger.incrementError("1", err);
 				callback(err);
 			}
 		}

@@ -7,6 +7,7 @@ var uuid = require('node-uuid');
 var fs = require('fs');
 var kue = require('kue'),
     queue = kue.createQueue();
+var logger = require('../logsystem/main.js');
 
 function init(req, res, Request) {
 
@@ -34,8 +35,8 @@ function init(req, res, Request) {
 
 	db.create(request_object, function(result) {
 		if (result !== null) {
-      // TODO retornar ID do video
 			res.send(200, { 'status': 'Requisição ' + result.id + ' cadastrada com sucesso.', 'video_id': result.id});
+      logger.incrementService("outros", "traducoes");
 		} else {
 			res.send(500, { 'error': 'Erro na criação da requisição.'});
 		}
@@ -62,11 +63,13 @@ function init(req, res, Request) {
   //		res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.webm' });
   		db.update(request_object, 'Completed', function(result) {
   		});
+      logger.incrementService("outros", "traducoes");
   	});
 
   	/* Listener que dispara quando a requisição ao core da erro */
   	child.on('error', function(code, signal){
   		res.send(500, parameters.errorMessage('Erro na chamada ao core'));
+      logger.incrementError("1", 'Erro na chamada ao core');
   		db.update(request_object, 'Error', function(result) {
   		});
   	});
