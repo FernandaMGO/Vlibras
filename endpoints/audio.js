@@ -97,8 +97,7 @@ function callCore(id, audio, req, res) {
 
 	/* Cria a linha de comando */
 	/* slice(2) é para transformar ./path em path */
-	var command_line = 'vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.body.servico) + ' ' +
-					audio.path.slice(2) + ' ' + parameters.getTransparency(req.body.transparencia) + ' ' + id + ' > /tmp/core_log 2>&1';
+	var command_line = 'vlibras_user/vlibras-core/./vlibras -A ' + audio.path.slice(2) + ' -b ' + parameters.getTransparency(req.body.transparencia) + ' --id ' + id + ' --mode devel > /tmp/core_log 2>&1';
 
 	console.log("=== Core: " + command_line);
 

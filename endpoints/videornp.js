@@ -134,7 +134,7 @@ function callCore(id, video, subtitle, req, res, Request, request_object) {
 
 	/* Cria a linha de comando */
 	/* slice(2) é para transformar ./path em path */
-	var command_line = 'vlibras_user/vlibras-core/./vlibras 7 ' + video.path.slice(2) + ' ' + id + ' > /tmp/core_log 2>&1';
+	var command_line = 'vlibras_user/vlibras-core/./vlibras -V ' + video.path.slice(2) + ' -p bottom_right -r large - -b opaque --no-mixer --id ' + id + ' --mode devel > /tmp/core_log 2>&1';
 
 	console.log("=== Core: " + command_line);
 
@@ -149,8 +149,8 @@ function callCoreSubtitle(id, subtitle, req, res, Request, request_object) {
                 });
 
                 /* Cria a linha de comando */
-                var command_line = 'vlibras_user/vlibras-core/./vlibras 7 ' +  ' uploads/' + id + '/' +
-                                                        req.files.legenda.name + ' opaco ' + id;
+                var command_line = 'vlibras_user/vlibras-core/./vlibras -S ' +  ' uploads/' + id + '/' +
+                                                        req.files.legenda.name + ' -l portugues -b opaco --id' + id + ' --mode devel > /tmp/core_log 2>&1';
 
                 /* Executa a linha de comando */
                 child = exec(command_line, function(err, stdout, stderr) {

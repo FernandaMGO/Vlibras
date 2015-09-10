@@ -13,19 +13,19 @@ function init(req, res) {
 	var id = uuid.v4();
 
 	/* Verifica se o paramêtro [transparencia] possue algum valor */
-	if (req.body.transparencia !== '') {
+	if (req.body.transparencia === '') {
 		res.send(500, parameters.errorMessage('O valor de algum parâmetro está vazio'));
 		return;
 	}
 
 	/* Verifica se os paramêtros [transparencia] possuem os seus únicos valores possíveis */
-	if ((parameters.checkTransparency(req.body.transparencia) === true)) {
+	if ((parameters.checkTransparency(req.body.transparencia) === false)) {
 		res.send(500, parameters.errorMessage('Parâmetros insuficientes ou inválidos'));
 		return;
 	}
 
 	/* Checa se o arquivo de legenda submetivo possui uma extensão válida */
-	if (parameters.checkSubtitle(req.files.legenda.name)) {
+	if (parameters.checkSubtitle(req.files.legenda.name) == false) {
 		res.send(500, parameters.errorMessage('Legenda com Extensão Inválida'));
 		return;
 	}
@@ -36,13 +36,13 @@ function init(req, res) {
 	/* Listener que dispara quando a pasta é criada */
 	child.on('close', function(code, signal){
 		/* Move a legenda submetido para a pasta com o seu ID correspondente */
-		fs.rename(req.files.legenda.path, __dirname + '/uploads/' + id + '/' + req.files.legenda.name, function(error) {
+		fs.rename(req.files.legenda.path, __dirname + 'uploads/' + id + '/' + req.files.legenda.name, function(error) {
 			if (error) { console.log(error); }
 		});
 
 		/* Cria a linha de comando */
-		var command_line = 'vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.body.servico) + ' uploads/' + id + '/' +
-							req.files.legenda.name + ' ' + parameters.getTransparency(req.body.transparencia) + ' ' + id;
+		var command_line = 'vlibras_user/vlibras-core/./vlibras -S' + ' uploads/' + id + '/' +
+							req.files.legenda.name + ' -l ' + parameters.getLanguage(req.body.linguagem) + ' -b ' + parameters.getTransparency(req.body.transparencia) + ' --id ' + id + ' --mode devel > /tmp/core_log 2>&1';
 
 		/* Executa a linha de comando */
 		// child = exec(command_line, function(err, stdout, stderr) {

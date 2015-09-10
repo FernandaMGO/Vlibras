@@ -28,11 +28,11 @@ function getServiceType(service_type) {
 function getLanguage(language) {
 	switch(language) {
 		case 'portugues':
-			return 1;
+			return 'portugues';
 		break;
 
 		case 'glosa':
-			return 2;
+			return 'glosa';
 		break;
 	}
 };
@@ -40,19 +40,19 @@ function getLanguage(language) {
 function getPosition(position) {
 	switch(position) {
 		case 'superior-esquerdo':
-			return 1;
+			return 'top_left';
 		break;
 
 		case 'superior-direito':
-			return 2;
+			return 'top_right';
 		break;
 
 		case 'inferior-direito':
-			return 3;
+			return 'bottom_right';
 		break;
 
 		case 'inferior-esquerdo':
-			return 4;
+			return 'bottom_left';
 		break;
 	}
 };
@@ -76,11 +76,27 @@ function getSize(size) {
 function getTransparency(transparency) {
 	switch(transparency) {
 		case 'opaco':
-			return 0;
+			return 'opaque';
 		break;
 
 		case 'transparente':
-			return 1;
+			return 'transp';
+		break;
+	}
+};
+
+function getSize(size) {
+	switch(size) {
+		case 'pequeno':
+			return 'small';
+		break;
+
+		case 'medio':
+			return 'medium';
+		break;
+
+		case 'grande':
+			return 'large';
 		break;
 	}
 };

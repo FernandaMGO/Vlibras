@@ -102,10 +102,8 @@ function callCore(id, video, subtitle, req, res) {
 
 	/* Cria a linha de comando */
 	/* slice(2) é para transformar ./path em path */
-	var command_line = 'vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.body.servico) + ' ' +
-					video.path.slice(2) + ' ' + subtitle.path.slice(2) + ' ' + parameters.getLanguage(req.body.linguagem) +
-					' ' + parameters.getPosition(req.body.posicao) + ' ' + parameters.getSize(req.body.tamanho) + ' ' +
-					parameters.getTransparency(req.body.transparencia) + ' ' + id + ' > /tmp/core_log 2>&1';
+	var command_line = 'vlibras_user/vlibras-core/./vlibras -V ' + video.path.slice(2) + ' -S ' + subtitle.path.slice(2) + ' -l ' + parameters.getLanguage(req.body.linguagem) + ' -p ' + parameters.getPosition(req.body.posicao) + ' -r ' + parameters.getSize(req.body.tamanho) + ' -b  ' +
+					parameters.getTransparency(req.body.transparencia) + ' --id ' + id + ' --mode devel > /tmp/core_log 2>&1';
 
 	console.log("=== Core: " + command_line);
 
