@@ -24,7 +24,7 @@ function init(req, res) {
 	}
 
 	process(req, res);
-};
+}
 
 function process(req, res) {
 	var id = uuid.v4();
@@ -104,6 +104,6 @@ function callCore(id, video, subtitle, req, res) {
 	console.log("=== Core: " + command_line);
 
 	core.call(id, command_line, req, res);
-};
+}
 
 module.exports.init = init;
