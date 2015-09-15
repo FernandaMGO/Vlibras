@@ -29,7 +29,7 @@ function downloadAndMoveVideo(folder, req, locals, callback) {
 		// Se não, retorna o vídeo enviado
 		locals.video = {
 			'path': folder + '/' + req.files.video.name
-		}
+		};
 
 		return callback();
 
@@ -70,7 +70,7 @@ function downloadAndMoveVideo(folder, req, locals, callback) {
 					// Retorna o vídeo baixado
 					locals.video = {
 						'path': path
-				 	}
+				 	};
 
 				 	// Chama o callback para prosseguir execução
 				 	callback();
@@ -116,7 +116,7 @@ function downloadAndMoveSubtitle(folder, req, locals, callback) {
 		// Se não, retorna o vídeo enviado
 		locals.subtitle = {
 			'path': folder + '/' + req.files.legenda.name
-		}
+		};
 
 		return callback();
 
@@ -157,7 +157,7 @@ function downloadAndMoveSubtitle(folder, req, locals, callback) {
 					// Retorna o vídeo baixado
 					locals.subtitle = {
 						'path': path
-				 	}
+				 	};
 
 				 	// Chama o callback para prosseguir execução
 				 	callback();
@@ -198,7 +198,7 @@ function downloadAndMoveAudio(folder, req, locals, callback) {
 		// Se não, retorna o áudio enviado
 		locals.audio = {
 			'path': folder + '/' + req.files.audio.name
-		}
+		};
 
 		return callback();
 
@@ -239,7 +239,7 @@ function downloadAndMoveAudio(folder, req, locals, callback) {
 					// Retorna o áudio baixado
 					locals.audio = {
 						'path': path
-				 	}
+				 	};
 
 				 	// Chama o callback para prosseguir execução
 				 	callback();
