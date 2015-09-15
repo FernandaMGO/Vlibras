@@ -1,13 +1,13 @@
 {
     "tipo": {
         "videos": {
-            "requisicoes": 0,
-            "traducoes": 0,
+            "requisicoes": 20,
+            "traducoes": 11,
             "saude": 0
         },
         "outros": {
-            "requisicoes": 88,
-            "traducoes": 88,
+            "requisicoes": 129,
+            "traducoes": 129,
             "saude": 1
         }
     }
