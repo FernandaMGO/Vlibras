@@ -14,13 +14,20 @@ function init(req, res, Request) {
 	var id = uuid.v4();
 
 	/* Verifica se os paramêtros [transparencia, texto] possuem algum valor */
-	if ((req.body.transparencia === '') || (req.body.texto === '')) {
+
+	if ((req.body.transparencia === '') || (req.body.texto === '') || (req.body.linguagem === '')) {
 		res.send(500, parameters.errorMessage('O valor de algum parâmetro está vazio'));
 		return;
-	}
+    }
 
 	/* Verifica se o paramêtro [transparencia] possui os únicos valores possíveis [opaco, transparente] */
 	if (parameters.checkTransparency(req.body.transparencia) === false) {
+		res.send(500, parameters.errorMessage('Parâmetros insuficientes ou inválidos'));
+		return;
+	}
+
+	/* Verifica se o paramêtro [linguagem] possui os únicos valores possíveis [portugues, glosa] */
+	if (parameters.checkLanguage(req.body.linguagem) === false) {
 		res.send(500, parameters.errorMessage('Parâmetros insuficientes ou inválidos'));
 		return;
 	}
@@ -43,8 +50,7 @@ function init(req, res, Request) {
 	});
 
 	/* Cria a linha de comando */
-	var command_line = 'echo ' + req.body.texto + ' >> text_files/' + id + ' && mkdir uploads/' + id + ' && vlibras_user/vlibras-core/./vlibras ' + parameters.getServiceType(req.body.servico) + ' text_files/' +
-						id + ' ' + parameters.getTransparency(req.body.transparencia) + ' ' + id + ' Web > /tmp/core_log 2>&1';
+	var command_line = 'echo ' + req.body.texto + ' >> text_files/' + id + ' && mkdir uploads/' + id + ' && vlibras_user/vlibras-core/./vlibras -T ' + 'text_files/' + id + ' -l ' + parameters.getLanguage(req.body.linguagem) + ' -b ' + parameters.getTransparency(req.body.transparencia) + ' --id ' + id + ' --mode devel >> /tmp/core_log 2>&1';
 
   console.log(command_line);
   var child;

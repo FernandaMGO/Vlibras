@@ -6,6 +6,7 @@ var ep_ios = require('./endpoints/ios');
 var ep_video = require('./endpoints/video');
 var ep_legenda = require('./endpoints/legenda');
 var ep_video_legenda = require('./endpoints/video_legenda');
+var ep_video_rnp = require('./endpoints/videornp');
 
 var mongoose = require('mongoose');
 require('./db/config').connect(mongoose);
