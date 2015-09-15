@@ -192,6 +192,10 @@ app.get('/limparfila', function(req, res) {
 	res.send(200, "Fila limpa");
 });
 
+app.get('/dicionario', function(req, res){
+	res.send(200, { 'versao': '1.0' } );
+});
+
 // precisa ficar no final caso o request n bata com nenhuma rota anterior
 app.get('/*', function(req, res){
 	logger.incrementError("4", "Rota nao encontrada");
