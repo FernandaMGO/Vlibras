@@ -22,6 +22,14 @@ var kue = require('kue');
 var queue = kue.createQueue();
 var unirest = require('unirest');
 
+var PythonShell = require('python-shell');
+
+var options = {
+	pythonPath: 'python',
+	scriptPath: '/home/libras/vlibras-translate/src',
+	args: []
+};
+
 app.use(express.static(path.join(__dirname, '/videos')));
 app.use(express.bodyParser({ keepExtensions: true, uploadDir: path.join(__dirname, '/uploads') }));
 
