@@ -119,7 +119,7 @@ app.get('/api/requests/', function(req,res) {
 
 
 app.get('/api/requests/:id', function(req, res) {
-	db.findById(Request, req.param.id, function(result) {
+	db.findById(Request, req.param("id"), function(result) {
 		if (result !== null) {
 			res.send(200, result);
 		} else {
