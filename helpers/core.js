@@ -9,7 +9,7 @@ var kue = require('kue'),
     queue = kue.createQueue();
 var logger = require('../logsystem/main.js');
 
-function call(id, command_line, req, res) {
+function call(id, command_line, req, res, Request, request_object) {
 	/* Executa a linha de comando */
 	// child = exec(command_line, function(err, stdout, stderr) {
 	//  	// [stdout] = vlibras-core output
@@ -41,9 +41,13 @@ function call(id, command_line, req, res) {
 		    // Se o core executou com erro
 		    if (code !== 0) {
 		      throw "Erro no retorno do core. Código: " + code;
+		      db.update(Request, request_object.id, 'Error', function (result) {
+		      });
 		    }
 
 		    // Se o core executou normal
+			db.update(Request, request_object.id, 'Completed', function (result) {
+		    });		   
 		    res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.mp4'});
 		  });
 
