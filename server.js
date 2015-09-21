@@ -197,7 +197,7 @@ app.get('/limparfila', function(req, res) {
 	  });
 	});
 
-	res.send(200, "Fila limpa");
+	res.send(200, {'status' : 'A fila foi resetada com sucesso.'});
 });
 
 app.get('/dicionario', function(req, res){
