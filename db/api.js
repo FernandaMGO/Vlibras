@@ -23,7 +23,7 @@ function update(Request, id, status, callback) {
 };
 
 function findById(Request, requestId, callback) {
-	Request.find({ id : requestId }, { _id: 0, __v: 0 }, function(err, result) {
+	Request.find({ id : requests }, { _id: 0, __v: 0 }, function(err, result) {
 		if (err) callback(null);
 		
 		callback(result);
@@ -31,13 +31,19 @@ function findById(Request, requestId, callback) {
 };
 
 function findByIds(Request, requests, callback) {
-	console.log(requests);
-	Request.find({
-	    'id': { $in: requests }
-	}, { _id: 0, __v: 0 }, function(err, request){
+	if( Object.prototype.toString.call( requests ) === '[object Array]' ) {
+		Request.find({
+		'id': { $in: requests }
+		}, { _id: 0, __v: 0 }, function(err, request){
 		if (err) callback(null);
 		callback(request);
-	});
+		 });
+	} else {
+		Request.find({ id : requests }, { _id: 0, __v: 0 }, function(err, result) {
+		if (err) callback(null);
+			callback(result);
+		});
+	}
 };
 
 function remove(Request, hash, callback) {
