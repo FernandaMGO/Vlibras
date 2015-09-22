@@ -23,7 +23,7 @@ function update(Request, id, status, callback) {
 };
 
 function findById(Request, requestId, callback) {
-	Request.find({ id : requests }, { _id: 0, __v: 0 }, function(err, result) {
+	Request.find({ id : requestId }, { _id: 0, __v: 0 }, function(err, result) {
 		if (err) callback(null);
 		
 		callback(result);
