@@ -16,6 +16,7 @@ function create(object, callback) {
 
 function update(Request, id, status, callback) {
 	console.log("== Update requisicao");
+	console.log("ID " + id + "STATUS " + status);
 	Request.update({'id': id}, {$set : { 'status' : status }}, function (err, result) {
 		if (err) callback(null);
 		callback(result);
