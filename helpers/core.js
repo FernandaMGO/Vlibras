@@ -8,6 +8,7 @@ var exec = require('child_process').exec, child;
 var kue = require('kue'),
     queue = kue.createQueue();
 var logger = require('../logsystem/main.js');
+var db = require('../db/api');
 
 function call(id, command_line, req, res, Request, request_object) {
 	/* Executa a linha de comando */
