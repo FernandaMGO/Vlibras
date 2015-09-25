@@ -65,6 +65,7 @@ function init(req, res, Request) {
 
   job.on('complete', function() {
     /* Listener que dispara quando a requisição ao core finaliza */
+    // console.log("JOB complete");
   	child.on('close', function(code, signal) {
   //		res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.webm' });
   		db.update(request_object, 'Completed', function(result) {
