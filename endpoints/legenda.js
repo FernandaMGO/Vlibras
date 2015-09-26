@@ -50,12 +50,12 @@ function init(req, res) {
 		//  	// console.log(stdout);
 		// });
 
-		var job = queue.create('exec_command_line', {
+		var job = queue.create('exec_command_line' + id, {
 		    title: 'Command Line for: ' + req.body.servico,
 		    command_line: command_line
 		}).save();
 
-		queue.process('exec_command_line', function(job, done){
+		queue.process('exec_command_line' + id, function(job, done){
 			child = queue_helper.exec_command_line(job.data.command_line, done);
 		});
 

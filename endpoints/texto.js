@@ -54,22 +54,20 @@ function init(req, res, Request) {
 
   console.log(command_line);
   var child;
-	var job = queue.create('exec_command_line', {
+	var job = queue.create('exec_command_line' + id, {
 	    title: 'Command Line for: ' + req.body.servico,
 	    command_line: command_line
 	}).removeOnComplete( true ).save();
 
-	queue.process('exec_command_line', function(job, done){
+	queue.process('exec_command_line' + id, function(job, done){
 		child = queue_helper.exec_command_line(job.data.command_line, done);
 	});
 
   job.on('complete', function() {
     /* Listener que dispara quando a requisição ao core finaliza */
-    // console.log("JOB complete");
   	child.on('close', function(code, signal) {
   //		res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.webm' });
-  		db.update(request_object, 'Completed', function(result) {
-  		});
+  		db.update(request_object, id, 'Completed', function(result) {});
       logger.incrementService("outros", "traducoes");
   	});
 

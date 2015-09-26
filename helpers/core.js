@@ -20,12 +20,12 @@ function call(id, command_line, req, res, Request, request_object) {
 	// });
 
 	var child,
-			job = queue.create('exec_command_line', {
+			job = queue.create('exec_command_line' + id, {
 	    title: 'Command Line for: ' + req.body.servico,
 	    command_line: command_line
 	}).removeOnComplete( true ).save();
 
-	queue.process('exec_command_line', function(job, done){
+	queue.process('exec_command_line' + id, function(job, done){
 		child = queue_helper.exec_command_line(job.data.command_line, done);
 		if (child === undefined) {
 			throw "Erro ao conectar com o core";
@@ -41,14 +41,14 @@ function call(id, command_line, req, res, Request, request_object) {
 
 		    // Se o core executou com erro
 		    if (code !== 0) {
-		      throw "Erro no retorno do core. Código: " + code;
 		      db.update(Request, request_object.id, 'Error', function (result) {
 		      });
+		      throw "Erro no retorno do core. Código: " + code;
 		    }
 
 		    // Se o core executou normal
 			db.update(Request, request_object.id, 'Completed', function (result) {
-		    });		   
+		    });
 		    res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.mp4'});
 		  });
 
