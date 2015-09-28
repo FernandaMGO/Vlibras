@@ -8,6 +8,8 @@ var uuid = require('node-uuid');
 var mkdirp = require('mkdirp');
 var async = require('async');
 var _ = require('lodash');
+var kue = require('kue'),
+    queue = kue.createQueue();
 
 function init(req, res, Request) {
 	res.set("Content-Type", "application/json");
@@ -165,21 +167,33 @@ function callCoreSubtitle(id, subtitle, req, res, Request, request_object) {
                 var command_line = 'vlibras_user/vlibras-core/./vlibras -S ' +  ' uploads/' + id + '/' +
                                                         req.files.legenda.name + ' -l portugues -b opaco --id' + id + ' --mode devel > /tmp/core_log 2>&1';
 
-                /* Executa a linha de comando */
-                child = exec(command_line, function(err, stdout, stderr) {
-                        // [stdout] = vlibras-core output
-                        // console.log(stdout);
-                });
+								var child;
+								var job = queue.create('exec_command_line' + id, {
+								    title: 'Command Line for: ' + req.body.servico,
+								    command_line: command_line
+								}).removeOnComplete( true ).save();
 
-                /* Listener que dispara quando a requisição ao core finaliza */
-                child.on('close', function(code, signal){
-                        res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.flv' });
-                });
+								queue.process('exec_command_line' + id, function(job, done){
+									child = queue_helper.exec_command_line(job.data.command_line, done);
+								});
+								
+								job.on('complete', function() {
+	                /* Executa a linha de comando */
+	                child = exec(command_line, function(err, stdout, stderr) {
+	                        // [stdout] = vlibras-core output
+	                        // console.log(stdout);
+	                });
 
-                /* Listener que dispara quando a requisição ao core da erro */
-                child.on('error', function(code, signal){
-                        res.send(500, parameters.errorMessage('Erro na chamada ao core'));
-                });
+	                /* Listener que dispara quando a requisição ao core finaliza */
+	                child.on('close', function(code, signal){
+	                        res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.flv' });
+	                });
+
+	                /* Listener que dispara quando a requisição ao core da erro */
+	                child.on('error', function(code, signal){
+	                        res.send(500, parameters.errorMessage('Erro na chamada ao core'));
+	                });
+								});
 
 }
 
