@@ -7,34 +7,33 @@ var db = require('../db/api');
 var uuid = require('node-uuid');
 var mkdirp = require('mkdirp');
 var async = require('async');
+var _ = require('lodash');
 
 function init(req, res, Request) {
 	res.set("Content-Type", "application/json");
 
-  /* Verifica se os paramêtros [transparencia, texto] possuem algum valor */
-	if (((req.body.legenda_url === '') && (req.body.video_url === '')) || ((typeof req.body.legenda_url === 'undefined') && (typeof req.body.video_url === 'undefined'))) {
-		res.send(500, parameters.errorMessage('O valor de algum parâmetro está vazio'));
+	if (_.isEmpty(req.body.legenda_url) && _.isEmpty(req.body.video_url)) {
+		res.send(500, parameters.errorMessage('O valor do parâmetro legenda_url e video_url está vazio'));
 		return;
-        }
+	}
 
-	/* Verifica se os paramêtros [transparencia, texto] possuem algum valor */
-	if ((typeof req.body.revisaomanual === 'undefined') || ((req.body.revisaomanual.toUpperCase() !== "SIM") && (req.body.revisaomanual.toUpperCase() !== "NAO"))) {
+	if (_.includes(req.body.revisaomanual, "SIM", "NAO")) {
 	        res.send(500, parameters.errorMessage('O valor do parâmetro revisaomanual é inválido.'));
 	        return;
 	}
 
-	if ((typeof req.body.conteudista === 'undefined') || (req.body.conteudista === '')) {
-	        res.send(500, parameters.errorMessage('O valor de algum parâmetro está vazio'));
+	if (_.isEmpty(req.body.conteudista)) {
+	        res.send(500, parameters.errorMessage('O valor do parâmetro conteudista está vazio'));
 	        return;
 	}
 
-	if ((typeof req.body.instituicao === 'undefined') || (req.body.instituicao === '')) {
-	        res.send(500, parameters.errorMessage('O valor de algum parâmetro está vazio'));
+	if (_.isEmpty(req.body.instituicao)) {
+	        res.send(500, parameters.errorMessage('O valor do parâmetro instituicao está vazio'));
 	        return;
 	}
 
-	if ((typeof req.body.usuario === 'undefined') || (req.body.usuario === '')) {
-	        res.send(500, parameters.errorMessage('O valor de algum parâmetro está vazio'));
+	if (_.isEmpty(req.body.usuario)) {
+	        res.send(500, parameters.errorMessage('O valor do parâmetro usuario está vazio'));
 	        return;
 	}
 
@@ -97,7 +96,12 @@ function process(req, res, Request) {
 
 			// Faz a chamada ao core
 			try {
-				callCore(id, locals.video, locals.subtitle, req, res, Request, request_object);
+
+				if (_.isEmpty(req.body.legenda_url)) { // video_url present
+					callCore(id, locals.video, locals.subtitle, req, res, Request, request_object);
+				} else {
+					callCoreSubtitle(id, locals.subtitle, req, res, Request, request_object);
+				}
 				callback();
 			} catch (err) {
 				callback(err);

@@ -21,6 +21,6 @@
     "unirest": "latest",
     "cron": "latest",
     "kue-ui": "latest",
-    "lodash": "latest"
+    "lodash": "^3.10.1"
   }
 }
