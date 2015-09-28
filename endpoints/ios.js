@@ -10,6 +10,8 @@ var logger = require('../logsystem/main.js');
 
 function init(req, res) {
 
+  logger.incrementService("outros", "requisicoes");
+  
 	var id = uuid.v4();
 
 	/* Verifica se os paramêtros [transparencia, texto] possuem algum valor */

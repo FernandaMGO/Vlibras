@@ -60,7 +60,6 @@ function process(req, res) {
 			try {
 				callCore(id, locals.audio, req, res);
 				callback();
-				logger.incrementService("outros", "traducoes");
 			} catch (err) {
 				logger.incrementError("1", err);
 				callback(err);
@@ -101,7 +100,7 @@ function callCore(id, audio, req, res) {
 
 	console.log("=== Core: " + command_line);
 
-	core.call(id, command_line, req, res);
-};
+	core.call(id, command_line, req, res, null, null, "outros");
+}
 
 module.exports.init = init;

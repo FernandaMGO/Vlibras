@@ -54,21 +54,17 @@ app.post('/api', function(req, res) {
 			switch(req.body.servico) {
 				/* Tipo de Serviço: Texto */
 				case 'texto':
-					logger.incrementService("outros", "requisicoes");
 					ep_texto.init(req, res, Request);
 				break;
 
 				/* Tipo de Serviço: iOS */
 				case 'ios':
-					logger.incrementService("outros", "requisicoes");
 					ep_ios.init(req, res);
 				break;
 
 				/* Tipo de Serviço: Só o Vídeo */
 				case 'video':
-					logger.incrementService("videos", "requisicoes");
 					ep_video.init(req, res);
-					// logger.incrementService("videos", "traducoes");
 				break;
 
 				case 'videornp':
@@ -77,9 +73,7 @@ app.post('/api', function(req, res) {
 
 				/* Tipo de Serviço: Só a Legenda */
 				case 'legenda':
-					logger.incrementService("outros", "requisicoes");
 					ep_legenda.init(req, res);
-
 				break;
 
 				/* Tipo de Serviço: Video + Legenda */
@@ -143,12 +137,11 @@ app.get('/glosa', function(req, res) {
 });
 
 // para testes apenas
-app.get('/incrementaerro', function(req, res) {
-	// logger.incrementError("1", "detalhe do erro");
-	// logger.incrementService("videos", "traducoes");
-	res.send(200, "Incrementado");
-
-});
+// app.get('/incrementaerro', function(req, res) {
+// 	// logger.incrementError("1", "detalhe do erro");
+// 	// logger.incrementService("videos", "traducoes");
+// 	res.send(200, "Incrementado");
+// });
 
 app.get('/limparfila', function(req, res) {
 

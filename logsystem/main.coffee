@@ -25,10 +25,18 @@ exports.incrementError = (id, detalhe="", inc=1) ->
   bloqueante = !config.isNaoBloqueante() # diferente de nao bloqueante aceita bloqueante ou ambos
 
   # id pode ser "1", "2", "3", "4" ou qualquer outro id criado para identificar erros
-  # 1 - Core retornou um erro.
-  # 2 - Vídeo inválido.
-  # 3 - Legenda inválida.
-  # 4 - Endpoint inválido.
+  # 1 ou 'core' - Core retornou um erro.
+  # 2 ou 'video' - Vídeo inválido.
+  # 3 ou 'legenda' - Legenda inválida.
+  # 4 ou 'endpoint' - Endpoint inválido.
+
+  switch id
+    when 'core' then id = "1"
+    when 'video' then id = "2"
+    when 'legenda' then id = "3"
+    when 'endpoint' then id = "4"
+    else
+      throw new Error "ID inválido"
 
   if bloqueante
     errors["resumo"]["bloqueante"][id] += inc

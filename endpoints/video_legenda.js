@@ -60,7 +60,6 @@ function process(req, res) {
 			try {
 				callCore(id, locals.video, locals.subtitle, req, res);
 				callback();
-				logger.incrementService("outros", "traducoes");
 			} catch (err) {
 				callback(err);
 				logger.incrementError("1", err);
@@ -107,7 +106,7 @@ function callCore(id, video, subtitle, req, res) {
 
 	console.log("=== Core: " + command_line);
 
-	core.call(id, command_line, req, res);
-};
+	core.call(id, command_line, req, res, null, null, "outros");
+}
 
 module.exports.init = init;

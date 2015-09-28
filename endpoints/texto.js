@@ -13,6 +13,8 @@ function init(req, res, Request) {
 
 	var id = uuid.v4();
 
+  logger.incrementService("outros", "requisicoes");
+
 	/* Verifica se os paramêtros [transparencia, texto] possuem algum valor */
 
 	if ((req.body.transparencia === '') || (req.body.texto === '') || (req.body.linguagem === '')) {
@@ -43,7 +45,6 @@ function init(req, res, Request) {
 	db.create(request_object, function(result) {
 		if (result !== null) {
 			res.send(200, { 'status': 'Requisição ' + result.id + ' cadastrada com sucesso.', 'video_id': result.id});
-      logger.incrementService("outros", "traducoes");
 		} else {
 			res.send(500, { 'error': 'Erro na criação da requisição.'});
 		}
@@ -74,7 +75,7 @@ function init(req, res, Request) {
   	/* Listener que dispara quando a requisição ao core da erro */
   	child.on('error', function(code, signal){
   		res.send(500, parameters.errorMessage('Erro na chamada ao core'));
-      logger.incrementError("1", 'Erro na chamada ao core');
+      logger.incrementError("core", 'Erro na chamada ao core');
   		db.update(request_object, 'Error', function(result) {
   		});
   	});

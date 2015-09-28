@@ -9,10 +9,10 @@ exports.exec_command_line = function (command_line, done) {
     	});
 
       child.on('error', function(code, signal) {
-        throw "Erro ao conectar com o core";
+        throw new Error("Erro ao conectar com o core");
       });
       child.on('disconnect', function(code, signal) {
-        throw "Disconectado do core";
+        throw new Error("Disconectado do core");
       });
 
       done();

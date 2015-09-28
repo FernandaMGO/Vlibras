@@ -12,6 +12,9 @@ function init(req, res) {
 
 	var id = uuid.v4();
 
+  logger.incrementService("outros", "requisicoes");
+
+
 	/* Verifica se o paramêtro [transparencia] possue algum valor */
 	if (req.body.transparencia === '') {
 		res.send(500, parameters.errorMessage('O valor de algum parâmetro está vazio'));
@@ -69,7 +72,7 @@ function init(req, res) {
 			/* Listener que dispara quando a requisição ao core da erro */
 			child.on('error', function(code, signal){
 				res.send(500, parameters.errorMessage('Erro na chamada ao core'));
-        logger.incrementError("1", err);
+        logger.incrementError("legenda", err);
 			});
 		});
 

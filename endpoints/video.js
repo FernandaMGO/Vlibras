@@ -11,6 +11,9 @@ var logger = require('../logsystem/main.js');
 function init(req, res) {
 	res.set("Content-Type", "application/json");
 
+	logger.incrementService("videos", "requisicoes");
+	
+
 	/* Verifica se os paramêtros [transparencia, texto] possuem algum valor */
 	if ((req.body.posicao === '') || (req.body.tamanho === '') || (req.body.transparencia === '')) {
 		res.send(500, parameters.errorMessage('O valor de algum parâmetro está vazio'));
@@ -59,7 +62,6 @@ function process(req, res) {
 			// Faz a chamada ao core
 			try {
 				callCore(id, locals.video, locals.subtitle, req, res);
-				logger.incrementService("videos", "traducoes");
 				callback();
 			} catch (err) {
 				logger.incrementError("1", err);
@@ -101,7 +103,7 @@ function callCore(id, video, subtitle, req, res) {
 
 	console.log("=== Core: " + command_line);
 
-	core.call(id, command_line, req, res);
+	core.call(id, command_line, req, res, null, null, "videos");
 }
 
 module.exports.init = init;

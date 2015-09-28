@@ -26,6 +26,22 @@
     errors_log_path = "./logsystem/errors.log";
     errors = JSON.parse(fs.readFileSync(errors_log_path, 'utf8'));
     bloqueante = !config.isNaoBloqueante();
+    switch (id) {
+      case 'core':
+        id = "1";
+        break;
+      case 'video':
+        id = "2";
+        break;
+      case 'legenda':
+        id = "3";
+        break;
+      case 'endpoint':
+        id = "4";
+        break;
+      default:
+        throw new Error("ID inválido");
+    }
     if (bloqueante) {
       errors["resumo"]["bloqueante"][id] += inc;
     } else {

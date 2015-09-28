@@ -10,12 +10,16 @@ var async = require('async');
 var _ = require('lodash');
 var kue = require('kue'),
     queue = kue.createQueue();
+var logger = require('../logsystem/main.js');
+
 
 function init(req, res, Request) {
 	res.set("Content-Type", "application/json");
 
 	if (_.isEmpty(req.body.legenda_url) && _.isEmpty(req.body.video_url)) {
 		res.send(500, parameters.errorMessage('O valor do parâmetro legenda_url e video_url está vazio'));
+    logger.incrementError("video", "O valor do parâmetro legenda_url e video_url está vazio");
+    logger.incrementError("legenda", "O valor do parâmetro legenda_url e video_url está vazio");
 		return;
 	}
 
@@ -65,7 +69,7 @@ function process(req, res, Request) {
 
 	db.create(request_object, function(result) {
 		if (result !== null) {
-			res.send(200, { 'id':  result.id });
+			res.send(200, { 'status': 'Requisição ' + result.id + ' cadastrada com sucesso.', 'video_id': result.id});
 		} else {
 			res.send(500, { 'error': 'Erro na criação da requisição.'});
 		}
@@ -98,7 +102,6 @@ function process(req, res, Request) {
 
 			// Faz a chamada ao core
 			try {
-
 				if (_.isEmpty(req.body.legenda_url)) { // video_url present
 					callCore(id, locals.video, locals.subtitle, req, res, Request, request_object);
 				} else {
@@ -125,10 +128,18 @@ function downloadAndMoveFiles(folder, req, locals, callback) {
 		function(callback) {
 			if (_.isEmpty(req.body.legenda_url)) { // video_url present
 				// Download video
-				files.downloadAndMoveVideo(folder, req, locals, callback);
+        try {
+          files.downloadAndMoveVideo(folder, req, locals, callback);
+        } catch (e) {
+          logger.incrementError("video", e);
+        }
 			} else {
 				// Download subtitle
-				files.downloadAndMoveSubtitle(folder, req, locals, callback);
+        try {
+          files.downloadAndMoveSubtitle(folder, req, locals, callback);
+        } catch (e) {
+          logger.incrementError("legenda", e);
+        }
 			}
 
 		}
@@ -154,7 +165,7 @@ function callCore(id, video, subtitle, req, res, Request, request_object) {
 	console.log("=== Core: " + command_line);
 
 	console.log("ID: " + request_object.id);
-	core.call(id, command_line, req, res, Request, request_object);
+	core.call(id, command_line, req, res, Request, request_object, "videos");
 }
 
 function callCoreSubtitle(id, subtitle, req, res, Request, request_object) {
@@ -176,7 +187,7 @@ function callCoreSubtitle(id, subtitle, req, res, Request, request_object) {
 								queue.process('exec_command_line' + id, function(job, done){
 									child = queue_helper.exec_command_line(job.data.command_line, done);
 								});
-								
+
 								job.on('complete', function() {
 	                /* Executa a linha de comando */
 	                child = exec(command_line, function(err, stdout, stderr) {
@@ -186,14 +197,34 @@ function callCoreSubtitle(id, subtitle, req, res, Request, request_object) {
 
 	                /* Listener que dispara quando a requisição ao core finaliza */
 	                child.on('close', function(code, signal){
-	                        res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.flv' });
+
+										// res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.flv' });
+
+										// Se o core executou com erro
+								    if (code !== 0) {
+								      db.update(Request, request_object.id, 'Error', function (result) {});
+						          console.log("Erro no retorno do core. Código: " + code);
+						          logger.incrementError('core', "Erro no retorno do core. Código: " + code);
+								    } else {
+						          // Se o core executou normal
+						    			db.update(Request, request_object.id, 'Completed', function (result) {});
+						          res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.mp4'});
+						          logger.incrementService("videos", "traducoes");
+						        }
+									});
+
+
 	                });
 
 	                /* Listener que dispara quando a requisição ao core da erro */
 	                child.on('error', function(code, signal){
-	                        res.send(500, parameters.errorMessage('Erro na chamada ao core'));
+										db.update(Request, request_object.id, 'Error', function (result) {});
+										console.log("Erro no retorno do core. Código: " + code);
+										logger.incrementError('core', "Erro no retorno do core. Código: " + code);
+										res.send(500, parameters.errorMessage('Erro na chamada ao core'));
 	                });
-								});
+
+
 
 }
 

@@ -3,12 +3,12 @@
         "videos": {
             "requisicoes": 20,
             "traducoes": 11,
-            "saude": 0
+            "saude": 1
         },
         "outros": {
-            "requisicoes": 200,
-            "traducoes": 176,
-            "saude": 0
+            "requisicoes": 201,
+            "traducoes": 177,
+            "saude": 1
         }
     }
 }

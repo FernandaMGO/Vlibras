@@ -10,7 +10,8 @@ var kue = require('kue'),
 var logger = require('../logsystem/main.js');
 var db = require('../db/api');
 
-function call(id, command_line, req, res, Request, request_object) {
+// req_type == "video" ou "outros" para ser usado no logger
+function call(id, command_line, req, res, Request, request_object, req_type) {
 	/* Executa a linha de comando */
 	// child = exec(command_line, function(err, stdout, stderr) {
 	//  	// [stdout] = vlibras-core output
@@ -18,6 +19,11 @@ function call(id, command_line, req, res, Request, request_object) {
 	// 	// console.log('STDOUT: ' + stdout);
 	// 	// console.log('STDERR: ' + stderr);
 	// });
+
+  // para ser usado no logger
+  req_type = req_type === "videos" ? req_type : "outros";
+
+  logger.incrementService(req_type, "requisicoes");
 
 	var child,
 			job = queue.create('exec_command_line' + id, {
@@ -27,9 +33,6 @@ function call(id, command_line, req, res, Request, request_object) {
 
 	queue.process('exec_command_line' + id, function(job, done){
 		child = queue_helper.exec_command_line(job.data.command_line, done);
-		if (child === undefined) {
-			throw "Erro ao conectar com o core";
-		}
 	});
 
 	job.on('complete', function() {
@@ -43,18 +46,20 @@ function call(id, command_line, req, res, Request, request_object) {
 		    if (code !== 0) {
 		      db.update(Request, request_object.id, 'Error', function (result) {
 		      });
-		      throw "Erro no retorno do core. Código: " + code;
-		    }
-
-		    // Se o core executou normal
-			db.update(Request, request_object.id, 'Completed', function (result) {
-		    });
-		    res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.mp4'});
+          console.log("Erro no retorno do core. Código: " + code);
+          logger.incrementError('core', "Erro no retorno do core. Código: " + code);
+		    } else {
+          // Se o core executou normal
+    			db.update(Request, request_object.id, 'Completed', function (result) {});
+          res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.mp4'});
+          logger.incrementService(req_type, "traducoes");
+        }
 		  });
 
 		  // Se a chamada deu erro
 		  child.on('error', function(code, signal) {
-		    throw "Erro na chamada ao core";
+		    console.log("Erro no retorno do core. Código: " + code);
+        logger.incrementError('core', "Erro no retorno do core. Código: " + code);
 		  });
 
 
@@ -63,17 +68,31 @@ function call(id, command_line, req, res, Request, request_object) {
 
 		  // Se a chamada foi feita com sucesso
 		  child.on('close', function(code, signal) {
+        var data;
 
 		    // Endereço do callback
 		    var path = url.parse(req.body.callback);
 
 		    // Se o core executou com erro
-		    if (code === 0) {
-		      var data = querystring.stringify({ 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.mp4', 'id' : id });
-		    } else {
-		      var data = querystring.stringify({ 'error': 'Erro no Core', 'code': code, 'id' : id });
-          logger.incrementError("2");
-		    }
+		    // if (code === 0) {
+		    //   data = querystring.stringify({ 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.mp4', 'id' : id });
+		    // } else {
+		    //   data = querystring.stringify({ 'error': 'Erro no Core', 'code': code, 'id' : id });
+        //   logger.incrementError('core', "Erro no retorno do core. Código: " + code);
+		    // }
+
+        // Se o core executou com erro
+        if (code !== 0) {
+          db.update(Request, request_object.id, 'Error', function (result) {
+          });
+          console.log("Erro no retorno do core. Código: " + code);
+          logger.incrementError('core', "Erro no retorno do core. Código: " + code);
+        } else {
+          // Se o core executou normal
+          db.update(Request, request_object.id, 'Completed', function (result) {});
+          res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.mp4'});
+          logger.incrementService(req_type, "traducoes");
+        }
 
 		    // Chama o callback
 		    requests.postRequest(path, data);
@@ -83,7 +102,7 @@ function call(id, command_line, req, res, Request, request_object) {
 		  child.on('error', function(code, signal) {
 		      var path = url.parse(req.body.callback);
 		      var data = querystring.stringify( { 'error': 'Erro na chamada ao core', 'code': code, 'id': id } );
-          logger.incrementError("2");
+          logger.incrementError('core', "Erro no retorno do core. Código: " + code);
 		      requests.postRequest(path, data);
 		  });
 
