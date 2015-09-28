@@ -17,7 +17,7 @@ function init(req, res, Request) {
 		return;
 	}
 
-	if (_.includes(req.body.revisaomanual, "SIM", "NAO")) {
+	if (_.includes(req.body.revisaomanual.toUpperCase(), "SIM", "NAO")) {
 	        res.send(500, parameters.errorMessage('O valor do parâmetro revisaomanual é inválido.'));
 	        return;
 	}
@@ -120,13 +120,22 @@ function process(req, res, Request) {
 
 function downloadAndMoveFiles(folder, req, locals, callback) {
 	async.parallel([
-		// Download video
 		function(callback) {
-			files.downloadAndMoveVideo(folder, req, locals, callback);
+			if (_.isEmpty(req.body.legenda_url)) { // video_url present
+				// Download video
+				files.downloadAndMoveVideo(folder, req, locals, callback);
+			} else {
+				// Download subtitle
+				files.downloadAndMoveSubtitle(folder, req, locals, callback);
+			}
+
 		}
 	], function(err) {
-		console.log("=== Video baixado");
-
+		if (_.isEmpty(req.body.legenda_url)) { // video_url present
+			console.log("== Video baixado");
+		} else {
+			console.log("== Legenda baixada");
+		}
 		// Callback chamado depois de todas as tarefas
 		// Se tiver erro, vai passar para cima
 		callback(err);
