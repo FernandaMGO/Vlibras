@@ -19,6 +19,8 @@
     "python-shell": "0.0.3",
     "kue": "latest",
     "unirest": "latest",
-    "cron": "latest"
+    "cron": "latest",
+    "kue-ui": "latest",
+    "lodash": "latest"
   }
 }

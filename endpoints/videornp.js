@@ -11,35 +11,35 @@ var async = require('async');
 function init(req, res, Request) {
 	res.set("Content-Type", "application/json");
 
-        /* Verifica se os paramêtros [transparencia, texto] possuem algum valor */	
-	if (((req.body.legenda_url === '') && (req.body.video_url === '')) || ((typeof req.body.legenda_url === 'undefined') && (typeof req.body.video_url === 'undefined'))) {	
+  /* Verifica se os paramêtros [transparencia, texto] possuem algum valor */
+	if (((req.body.legenda_url === '') && (req.body.video_url === '')) || ((typeof req.body.legenda_url === 'undefined') && (typeof req.body.video_url === 'undefined'))) {
 		res.send(500, parameters.errorMessage('O valor de algum parâmetro está vazio'));
 		return;
         }
 
-        /* Verifica se os paramêtros [transparencia, texto] possuem algum valor */
-        if ((typeof req.body.revisaomanual === 'undefined') || ((req.body.revisaomanual.toUpperCase() !== "SIM") && (req.body.revisaomanual.toUpperCase() !== "NAO"))) {
-                res.send(500, parameters.errorMessage('O valor do parâmetro revisaomanual é inválido.'));
-                return;
-        }
+	/* Verifica se os paramêtros [transparencia, texto] possuem algum valor */
+	if ((typeof req.body.revisaomanual === 'undefined') || ((req.body.revisaomanual.toUpperCase() !== "SIM") && (req.body.revisaomanual.toUpperCase() !== "NAO"))) {
+	        res.send(500, parameters.errorMessage('O valor do parâmetro revisaomanual é inválido.'));
+	        return;
+	}
 
-        if ((typeof req.body.conteudista === 'undefined') || (req.body.conteudista === '')) {
-                res.send(500, parameters.errorMessage('O valor de algum parâmetro está vazio'));
-                return;
-        }
+	if ((typeof req.body.conteudista === 'undefined') || (req.body.conteudista === '')) {
+	        res.send(500, parameters.errorMessage('O valor de algum parâmetro está vazio'));
+	        return;
+	}
 
-        if ((typeof req.body.instituicao === 'undefined') || (req.body.instituicao === '')) {
-                res.send(500, parameters.errorMessage('O valor de algum parâmetro está vazio'));
-                return;
-        }
+	if ((typeof req.body.instituicao === 'undefined') || (req.body.instituicao === '')) {
+	        res.send(500, parameters.errorMessage('O valor de algum parâmetro está vazio'));
+	        return;
+	}
 
-        if ((typeof req.body.usuario === 'undefined') || (req.body.usuario === '')) {
-                res.send(500, parameters.errorMessage('O valor de algum parâmetro está vazio'));
-                return;
-        }
+	if ((typeof req.body.usuario === 'undefined') || (req.body.usuario === '')) {
+	        res.send(500, parameters.errorMessage('O valor de algum parâmetro está vazio'));
+	        return;
+	}
 
 	process(req, res, Request);
-};
+}
 
 function process(req, res, Request) {
 	var id = uuid.v4();
@@ -69,7 +69,7 @@ function process(req, res, Request) {
 			res.send(500, { 'error': 'Erro na criação da requisição.'});
 		}
 	});
-	
+
 	async.series([
 		// Cria a pasta apropriada
 		function(callback) {
@@ -140,7 +140,7 @@ function callCore(id, video, subtitle, req, res, Request, request_object) {
 
 	console.log("ID: " + request_object.id);
 	core.call(id, command_line, req, res, Request, request_object);
-};
+}
 
 function callCoreSubtitle(id, subtitle, req, res, Request, request_object) {
                 /* Move a legenda submetido para a pasta com o seu ID correspondente */
@@ -168,6 +168,6 @@ function callCoreSubtitle(id, subtitle, req, res, Request, request_object) {
                         res.send(500, parameters.errorMessage('Erro na chamada ao core'));
                 });
 
-};
+}
 
 module.exports.init = init;
