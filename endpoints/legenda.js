@@ -28,7 +28,7 @@ function init(req, res) {
 	}
 
 	/* Checa se o arquivo de legenda submetivo possui uma extensão válida */
-	if (parameters.checkSubtitle(req.files.legenda.name) == false) {
+	if (parameters.checkSubtitle(req.files.legenda.name) === false) {
 		res.send(500, parameters.errorMessage('Legenda com Extensão Inválida'));
 		return;
 	}

@@ -14,8 +14,8 @@ function postRequest(path, data) {
 
 	var requesting = http.request(options, function(res) {
 		/* Debugging */
-		
-		console.log('== Chamando callback: ' + path.hostname)
+
+		console.log('=== Chamando callback: ' + path.hostname);
 	    console.log('=== Response status: ' + res.statusCode);
 		console.log('=== Response headers: ' + JSON.stringify(res.headers));
 
@@ -24,7 +24,7 @@ function postRequest(path, data) {
 		res.on('data', function (chunk) {
 			console.log('=== Response body: ' + chunk);
 		});
-		
+
 	});
 
 	requesting.on('error', function (e) {

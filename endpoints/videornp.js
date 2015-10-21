@@ -12,6 +12,11 @@ var _ = require('lodash');
 var kue = require('kue'),
     queue = kue.createQueue();
 var logger = require('../logsystem/main.js');
+var url = require('url');
+var requests = require('../helpers/requests');
+var querystring = require('querystring');
+
+
 
 
 function init(req, res, Request) {
@@ -183,7 +188,7 @@ function callCoreSubtitle(id, subtitle, req, res, Request, request_object) {
                 }
 
                 var command_line = 'vlibras_user/vlibras-core/./vlibras -S ' +  ' uploads/' + id + '/' +
-                                                        legenda_name + ' -l portugues -b opaco --id' + id + ' --mode devel > /tmp/core_log 2>&1';
+                                                        legenda_name + ' -l portugues -b opaco --id ' + id + ' --mode devel > /tmp/core_log 2>&1';
 
 
 				var child;
@@ -203,26 +208,44 @@ function callCoreSubtitle(id, subtitle, req, res, Request, request_object) {
 	                        // console.log(stdout);
 	                });
 
+                    var data, path;
+            		// Endereço do callback
+                    if (req.body.callback !== undefined) {
+                        path = url.parse(req.body.callback);
+                    }
+
 	                /* Listener que dispara quando a requisição ao core finaliza */
 	                child.on('close', function(code, signal){
+						// Se o core executou com erro
+					    if (code !== 0) {
+					      db.update(Request, request_object.id, 'Error', function (result) {});
+				          console.log("Erro no retorno do core. Código: " + code);
+				          logger.incrementError('core', "Erro no retorno do core. Código: " + code);
+                          data = {
+                            'error' : "Erro no Core",
+                            'code' : code,
+                            'id' : id
+                          };
+						} else {
+				          // Se o core executou normal
+				    	  db.update(Request, request_object.id, 'Completed', function (result) {});
+				          res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.mp4'});
+				          logger.incrementService("videos", "traducoes");
+                          data = {
+                            'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.mp4',
+                            'versao' : '1.0',
+                            'legenda' : ''
+                          };
+				        }
 
-										// res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.flv' });
-
-										// Se o core executou com erro
-								    if (code !== 0) {
-								      db.update(Request, request_object.id, 'Error', function (result) {});
-						          console.log("Erro no retorno do core. Código: " + code);
-						          logger.incrementError('core', "Erro no retorno do core. Código: " + code);
-								    } else {
-						          // Se o core executou normal
-						    			db.update(Request, request_object.id, 'Completed', function (result) {});
-						          res.send(200, { 'response' : 'http://' + properties.SERVER_IP + ':' + properties.port + '/' + id + '.mp4'});
-						          logger.incrementService("videos", "traducoes");
-						        }
-									});
+                        if (req.body.callback !== undefined) {
+                            data = querystring.stringify(data);
+                            requests.postRequest(path, data);
+                        }
+					});
 
 
-	                });
+	            });
 
 	                /* Listener que dispara quando a requisição ao core da erro */
 	                child.on('error', function(code, signal){

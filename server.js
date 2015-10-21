@@ -41,6 +41,11 @@ app.get('/', function(req, res){
 	res.send(200, { 'status': 'server is running!' } );
 });
 
+app.post('/testcallback', function(req, res) {
+	console.log(req.body);
+	res.send(200, { 'status': 'Callback OK' } );
+});
+
 app.post('/api', function(req, res) {
 	console.log("\n\n\n=============================================");
 	console.log("[" + new Date().toISOString() + "] Requisição do IP: " + req.ip);
