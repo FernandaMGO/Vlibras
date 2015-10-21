@@ -36,7 +36,7 @@ exports.incrementError = (id, detalhe="", inc=1) ->
     when 'legenda' then id = "3"
     when 'endpoint' then id = "4"
     else
-      throw new Error "ID inválido"
+      console.log("ID inválido")
 
   if bloqueante
     errors["resumo"]["bloqueante"][id] += inc
