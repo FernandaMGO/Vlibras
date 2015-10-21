@@ -17,10 +17,10 @@
 
   exports.incrementError = function(id, detalhe, inc) {
     var bloqueante, errors, errors_log_path;
-    if (detalhe == null) {
+    if (detalhe === null) {
       detalhe = "";
     }
-    if (inc == null) {
+    if (inc === null) {
       inc = 1;
     }
     errors_log_path = "./logsystem/errors.log";
@@ -40,7 +40,7 @@
         id = "4";
         break;
       default:
-        throw new Error("ID inválido");
+        console.log("ID inválido");
     }
     if (bloqueante) {
       errors["resumo"]["bloqueante"][id] += inc;
@@ -53,7 +53,7 @@
 
   exports.incrementService = function(serviceType, type, inc) {
     var services, services_log_path;
-    if (inc == null) {
+    if (inc === null) {
       inc = 1;
     }
     services_log_path = "./logsystem/services.log";
@@ -68,10 +68,10 @@
 
   exports.updateHealth = function(serviceType, value) {
     var services, services_log_path;
-    if (serviceType == null) {
+    if (serviceType === null) {
       serviceType = "outros";
     }
-    if (value == null) {
+    if (value === null) {
       value = 0;
     }
     services_log_path = "./logsystem/services.log";
