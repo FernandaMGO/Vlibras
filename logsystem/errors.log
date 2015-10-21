@@ -1,10 +1,10 @@
 {
     "resumo": {
         "bloqueante": {
-            "1": 2,
+            "1": 3,
             "2": 0,
-            "3": 0,
-            "4": 48
+            "3": 2,
+            "4": 49
         },
         "nao-bloqueante": {
             "1": 0,
@@ -14,9 +14,9 @@
         }
     },
     "detalhado": {
-        "1": "detalhe do erro",
+        "1": "Erro no retorno do core. Código: 127",
         "2": "detalhe",
-        "3": "detalhe",
+        "3": {},
         "4": "Rota nao encontrada"
     }
 }

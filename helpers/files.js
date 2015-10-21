@@ -95,7 +95,6 @@ function downloadAndMoveVideo(folder, req, locals, callback) {
 * Deve retornar um objeto contendo o nome e o caminho
 */
 function downloadAndMoveSubtitle(folder, req, locals, callback) {
-
 	// Se enviou o arquivo na requisição
 	if (req.files.legenda !== undefined) {
 
@@ -147,7 +146,6 @@ function downloadAndMoveSubtitle(folder, req, locals, callback) {
 
 			// Salva o arquivo em disco
 			response.pipe(file);
-
 			// Quando a escrita acabar
 			file.on('finish', function() {
 
@@ -160,6 +158,7 @@ function downloadAndMoveSubtitle(folder, req, locals, callback) {
 				 	};
 
 				 	// Chama o callback para prosseguir execução
+					console.log("== Legenda baixada");
 				 	callback();
 				});
 			});

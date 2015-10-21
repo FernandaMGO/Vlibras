@@ -3,7 +3,8 @@ var properties = require('../helpers/properties');
 var files = require('../helpers/files');
 var core = require('../helpers/core');
 var db = require('../db/api');
-
+var queue_helper = require('../helpers/queue');
+var exec = require('child_process').exec, child;
 var uuid = require('node-uuid');
 var mkdirp = require('mkdirp');
 var async = require('async');
@@ -147,7 +148,8 @@ function downloadAndMoveFiles(folder, req, locals, callback) {
 		if (_.isEmpty(req.body.legenda_url)) { // video_url present
 			console.log("== Video baixado");
 		} else {
-			console.log("== Legenda baixada");
+            // nao chama corretamente
+			// console.log("== Legenda baixada");
 		}
 		// Callback chamado depois de todas as tarefas
 		// Se tiver erro, vai passar para cima
@@ -170,25 +172,31 @@ function callCore(id, video, subtitle, req, res, Request, request_object) {
 
 function callCoreSubtitle(id, subtitle, req, res, Request, request_object) {
                 /* Move a legenda submetido para a pasta com o seu ID correspondente */
-                fs.rename(req.files.legenda.path, __dirname + '/uploads/' + id + '/' + req.files.legenda.name, function(error) {
-                        if (error) { console.log(error); }
-                });
 
                 /* Cria a linha de comando */
+                var legenda_name = "";
+                if(req.body.legenda_url !== undefined) {
+                    legenda_name = req.body.legenda_url.substring(req.body.legenda_url.lastIndexOf('/') + 1);
+                    legenda_name = legenda_name.split(".")[0];
+                } else if (req.files.legenda.name !== undefined) {
+                    legenda_name = req.files.legenda.name;
+                }
+
                 var command_line = 'vlibras_user/vlibras-core/./vlibras -S ' +  ' uploads/' + id + '/' +
-                                                        req.files.legenda.name + ' -l portugues -b opaco --id' + id + ' --mode devel > /tmp/core_log 2>&1';
+                                                        legenda_name + ' -l portugues -b opaco --id' + id + ' --mode devel > /tmp/core_log 2>&1';
 
-								var child;
-								var job = queue.create('exec_command_line' + id, {
-								    title: 'Command Line for: ' + req.body.servico,
-								    command_line: command_line
-								}).removeOnComplete( true ).save();
 
-								queue.process('exec_command_line' + id, function(job, done){
-									child = queue_helper.exec_command_line(job.data.command_line, done);
-								});
+				var child;
+				var job = queue.create('exec_command_line' + id, {
+				    title: 'Command Line for: ' + req.body.servico,
+				    command_line: command_line
+				}).removeOnComplete( true ).save();
 
-								job.on('complete', function() {
+				queue.process('exec_command_line' + id, function(job, done){
+					child = queue_helper.exec_command_line(job.data.command_line, done);
+				});
+
+				job.on('complete', function() {
 	                /* Executa a linha de comando */
 	                child = exec(command_line, function(err, stdout, stderr) {
 	                        // [stdout] = vlibras-core output
